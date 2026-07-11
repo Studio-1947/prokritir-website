@@ -1,5 +1,6 @@
 import React from "react";
 import { motion, useTransform } from "framer-motion";
+import { useOrder } from "@/lib/orderContext";
 
 /**
  * StoryOverlay - renders the text/copy for each chapter as a fixed overlay,
@@ -12,6 +13,7 @@ const useChapterOpacity = (progress, start, mid1, mid2, end) => {
 };
 
 const StoryOverlay = ({ progress }) => {
+  const { open } = useOrder();
   // per-chapter opacities (tightened so only one chapter of copy shows at a time)
   const heroOp   = useTransform(progress, [0, 0.02, 0.13, 0.17], [1, 1, 1, 0]);
   const sourceOp = useChapterOpacity(progress, 0.19, 0.24, 0.33, 0.38);
@@ -174,9 +176,14 @@ const StoryOverlay = ({ progress }) => {
             <a href="#footer" className="btn-ghost-outline px-6 py-3 rounded-full text-[12px] tracking-[0.25em] uppercase text-white" data-testid="cta-learn-more">
               Read the promise
             </a>
-            <a href="#footer" className="px-6 py-3 rounded-full text-[12px] tracking-[0.25em] uppercase bg-cyan-300 text-[#0A192F] hover:bg-cyan-200 transition-colors" data-testid="cta-order-mission">
+            <button
+              type="button"
+              onClick={() => open("PJ-500-12")}
+              className="px-6 py-3 rounded-full text-[12px] tracking-[0.25em] uppercase bg-cyan-300 text-[#0A192F] hover:bg-cyan-200 transition-colors"
+              data-testid="cta-order-mission"
+            >
               Order a case
-            </a>
+            </button>
           </div>
         </div>
       </motion.div>

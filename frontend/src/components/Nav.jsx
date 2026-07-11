@@ -1,8 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { BRAND } from "@/lib/brand";
+import { useOrder } from "@/lib/orderContext";
 
 const Nav = () => {
+  const { open } = useOrder();
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -31,13 +33,14 @@ const Nav = () => {
           <a href="#mission" className="hover:text-white transition-colors" data-testid="nav-mission">Promise</a>
         </nav>
 
-        <a
-          href="#mission"
+        <button
+          type="button"
+          onClick={() => open()}
           className="btn-ghost-outline text-[12px] tracking-[0.2em] uppercase text-white/85 px-5 py-3 rounded-full"
           data-testid="cta-order"
         >
           Order · 500 ml
-        </a>
+        </button>
       </div>
       <div className="hairline opacity-40" />
     </motion.header>
