@@ -1,0 +1,32 @@
+{
+  "summary": "Frontend-only verification of BottleScene fix. Bottle now renders correctly and is visible at every scroll checkpoint across 3 viewports (1920x1080, 1024x768, 390x844). Cap-lift animation confirmed. Regression smoke on chapter overlays + cta-order modal passed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_1.json",
+    "/app/test_reports/iteration_2.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BottleScene.jsx uses inline `min(78vh, calc(90vw / 0.4956))` — the wrapper's aspect ratio is now driven exclusively by explicit width+height math, avoiding the previous auto-width collapse. Solid fix.",
+    "Both bottle <img> elements are absolutely positioned (`absolute inset-0 h-full w-full object-contain`) inside the sized wrapper — no aspect-ratio CSS reliance. Confirmed rect width/height > 100px at all probed viewports.",
+    "Minor: framer-motion useScroll emits a console warning 'Please ensure that the container has a non-static position, like relative, fixed, or absolute...'. Landing.jsx section already has `className=\"relative\"` so it should not fire — worth investigating if the ref target needs a position or if warning is a false positive from an inner motion container. Not blocking."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (skipped per request)",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "BottleScene fix verified end-to-end. Bottle visible at hero (y=100), source (y=1260), purity (y=2160), reveal/cap-lift (y=3060/3150), and people (y=3735) on 1440x900. Sized correctly at 1920x1080, 1024x768, 390x844 viewports with horizontal centering within +/- 20px. Cap-lift animation on second img element goes from ty=0 (progress~0) to ty=-138.77 at y=3150 and reaches ty=-320 at higher scroll. Chapter overlays chapter-source, chapter-purity, chapter-reveal, chapter-people, chapter-mission all present. cta-order button opens OrderModal (confirmed via [role='dialog'] presence). No fixes needed. Only note: framer-motion useScroll emits a warning about container position — verify if intentional or fix by adding style/class to the section.",
+  "rca of the issue": "Previous bottle collapse was caused by a circular auto-width CSS chain: motion.div had h-[78vh] w-auto, inner div depended on aspectRatio 573/1230 + width:auto + h-full, and the img was h-full w-auto — some browsers cannot resolve this reliably. Fix: motion.div now has explicit height min(78vh, calc(90vw / 0.4957)) and width min(calc(78vh * 0.4957), 90vw). Both images use absolute inset-0 h-full w-full object-contain, eliminating the auto-width chain. Verified visually + programmatically."
+}
