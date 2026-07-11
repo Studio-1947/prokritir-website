@@ -1,0 +1,97 @@
+{
+  "theme": "hybrid",
+  "emotional_tone": "Cinematic, luxurious, grounded in nature, authentic.",
+  "architecture": "Marketing Page / Interactive Storytelling (Scroll-driven)",
+  "typography": {
+    "heading_font": "Playfair Display",
+    "body_font": "Manrope",
+    "bengali_font": "Hind Siliguri",
+    "font_strategy": "Elegant serif headers for a premium mineral water feel, paired with an extremely clean sans-serif body. The Bengali font should be used gracefully alongside English text (e.g., as sub-brand text)."
+  },
+  "colors": {
+    "primary": "#0A192F",
+    "secondary": "#135033",
+    "accent": "#00E5FF",
+    "background_dark": "#061021",
+    "background_light": "#F8F9FA",
+    "text_dark": "#F8F9FA",
+    "text_light": "#0A192F",
+    "strategy": "Deep Navy drawn from the bottle label as the base 'dark mode' canvas, transitioning into Forest Emerald Green for nature scenes, and pure Off-white for the purity/drinking scenes. Use the Cyan accent extremely sparingly just for water glow or progress indicators."
+  },
+  "visual_enhancers": {
+    "shadows": "Soft, ambient glowing shadows behind the bottle to separate it from dark backgrounds (e.g., drop-shadow-[0_0_60px_rgba(0,229,255,0.15)]).",
+    "textures": "Subtle noise overlay (grain) on dark sections to create a cinematic, non-digital feel.",
+    "borders": "1px translucent borders (border-white/10) on structural elements if needed, but primarily rely on full-bleed imagery and color blocking.",
+    "glassmorphism": "Use backdrop-blur-xl with bg-black/40 for floating text boxes over photography."
+  },
+  "layouts_and_grids": {
+    "spacing": "Ultra-generous. Use py-32 to py-48 for section transitions to allow the scroll animations breathing room.",
+    "bottle_container": "The bottle must be placed in a fixed or sticky container (z-40) in the center of the viewport, so it remains visible as the user scrolls through the first 3-4 sections.",
+    "story_sections": "Sections should be min-h-[150vh] to provide enough scroll-distance to drive the framer-motion useScroll values."
+  },
+  "motion_and_interactions": {
+    "library": "framer-motion",
+    "scroll_strategy": "Use `useScroll` and `useTransform` to bind the bottle's rotation, scale, and y-position to the window's scroll position. As the user scrolls, the bottle should spin (rotateY or rotateZ), scale up/down, and eventually translate away.",
+    "pseudo_3d": "Since we have a 2D transparent PNG, simulate 3D by combining scale, slight rotation, and floating translate-y animations. To 'open the cap', use a clip-path trick or translate a cropped version of the cap image upwards if possible, otherwise scale the bottle dramatically to fill the screen and fade into the drinking photo.",
+    "parallax": "Background images of rural villages and water splashes should move at a slower speed than the foreground scroll (y-axis parallax)."
+  },
+  "accessibility": {
+    "contrast": "Ensure white text on photography always has a subtle dark gradient overlay (bg-gradient-to-t from-black/80 to-transparent) or glassmorphism background.",
+    "motion": "Respect prefers-reduced-motion for the heavy parallax effects."
+  },
+  "media": {
+    "images": [
+      {
+        "category": "hero_bottle",
+        "url": "https://customer-assets.emergentagent.com/job_3a85e111-a2bb-4dcc-b4be-235baecdb764/artifacts/nyuaa9w0_jhvhjxavs%201.png",
+        "description": "The main Prokritir Jol transparent PNG. Sticky/Fixed in center."
+      },
+      {
+        "category": "scene_2_background_village",
+        "url": "https://images.unsplash.com/photo-1773023785875-9ea8c6717559?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzN8MHwxfHNlYXJjaHwyfHxydXJhbCUyMHZpbGxhZ2UlMjBsdXNoJTIwZ3JlZW4lMjBsYW5kc2NhcGV8ZW58MHx8fHwxNzgzNzUzMjU3fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Aerial view of lush green rice paddies and village. Used as parallax background for the nature source scene."
+      },
+      {
+        "category": "scene_2_tubewell",
+        "url": "https://images.unsplash.com/photo-1677907564161-7279d5aac75f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHwxfHxoYW5kJTIwcHVtcCUyMHdhdGVyJTIwdmlsbGFnZXxlbnwwfHx8fDE3ODM3NTMyNzB8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Rustic hand pump in a green field representing the deep tubewell source."
+      },
+      {
+        "category": "scene_3_purity",
+        "url": "https://images.pexels.com/photos/247770/pexels-photo-247770.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Macro water droplet splash representing RO filtration and purity."
+      },
+      {
+        "category": "scene_4_drinking_youth",
+        "url": "https://images.unsplash.com/photo-1747374135959-9291ba69215e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwzfHx5b3VuZyUyMGluZGlhbiUyMG1hbiUyMGRyaW5raW5nJTIwd2F0ZXJ8ZW58MHx8fHwxNzgzNzUzMjU3fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Smiling young Indian man holding bottle under green foliage."
+      },
+      {
+        "category": "scene_5_drinking_nepali",
+        "url": "https://images.unsplash.com/photo-1774438362744-49d5cd818e4a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjh8MHwxfHNlYXJjaHwyfHxuZXBhbGklMjB5b3V0aCUyMGRyaW5raW5nJTIwd2F0ZXJ8ZW58MHx8fHwxNzgzNzUzMjcwfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Woman in traditional attire drinking from a bottle."
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "1. Structure the app as a single long-scrolling page with multiple sections (min-h-[150vh] or 200vh each) to provide ample scroll track.",
+    "2. Implement a fixed or sticky container that holds the `bottle.png` image. Use `framer-motion`'s `useScroll` and `useTransform` to map the page's scroll position to the bottle's `rotate`, `scale`, and `y` properties.",
+    "3. SCENE 1 (Hero): Dark Navy. Bottle is center. Introduce brand 'Prokritir Jol' / 'প্রকৃতির জল'.",
+    "4. SCENE 2 (Source): Parallax background of the lush green village and tubewell. The bottle should appear to 'spin' (rotate) as the user scrolls into this section.",
+    "5. SCENE 3 (Filtration): Background transitions to the water splash. Text talks about RO purification.",
+    "6. SCENE 4 (The Reveal): To simulate opening the cap, apply a CSS clip-path to slice the top part of the image and translate it upwards based on scroll, OR scale the bottle dramatically so the label fills the screen and fades out, revealing the drinking photos.",
+    "7. SCENE 5 (Human Connection): Show the images of the Indian youth and Nepali youth drinking the water. Use elegant bento-style or staggered full-width image reveals with framer-motion.",
+    "8. Use `lenis` for smooth scrolling if possible, or simple CSS smooth scroll. Include a subtle scroll progress indicator.",
+    "9. Include `data-testid` attributes on interactive elements."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. Make creative, distinctive frontends that surprise and delight.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) for text containers over busy imagery.",
+    "You MUST NOT apply universal transition (e.g., transition: all).",
+    "Every interaction needs micro-animations - hover states, transitions.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "NEVER use placeholder URLs or AI assistant Emoji characters."
+  ]
+}
