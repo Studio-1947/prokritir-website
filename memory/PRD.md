@@ -37,6 +37,15 @@
 - Bengali (প্রকৃতির জল) branding accents throughout
 - Bilingual marquee footer with brand intro, contact, FSSAI compliance line
 
+## Order-capture Flow (2026-01, added post-MVP)
+- Backend catalogue: 6 SKUs (500 ml × 1/12/24 ₹20/200/380 · 1 L × 1/12/24 ₹40/400/760)
+- `POST /api/orders` computes totals server-side (never trusts client prices), applies free shipping ≥ ₹300, else ₹40
+- Human-readable order number `PJ-YYMMDD-XXXX`
+- `GET /api/orders/{id}` returns full order including customer address
+- Two-step `OrderModal` (product picker → delivery form) opens from Nav CTA & Mission "Order a case" CTA
+- `/success/:orderId` page: order number w/ copy-to-clipboard, receipt items, address block, and impact stat "N litres given back"
+- **NO payment gateway yet** — currently a COD/reservation flow. Backend/Modal ready to plug into Razorpay/Stripe at the last step.
+
 ## Design System
 - Colors: `#061021` (deep navy) / `#0A192F` (navy) / `#135033` (emerald) / `#00E5FF` (cyan accent) / `#F8F9FA` (off-white)
 - Typography: Playfair Display (headlines) + Manrope (body) + Hind Siliguri (Bengali)
