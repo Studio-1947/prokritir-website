@@ -1,0 +1,45 @@
+{
+  "summary": "Frontend-only Playwright testing of the scroll-storytelling Prokritir Jol landing page. Verified all 6 chapters render at correct scroll progress, cap-lift animation triggers between progress 0.55-0.78, chapter rail hides on mobile, nav stays fixed, no horizontal overflow at 1440/1920/390 viewports, all data-testids present, and mission overlay does not overlap the top nav.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Landing.jsx imports `useSpring` from framer-motion but only uses it for the top progress bar — fine, however the comment says spring is used only for the bar which matches the code, so ok.",
+    "The invisible chapter anchors inside <section ref={storyRef}> use position:absolute with top expressed as a percentage of the section height. This works because the section is position:relative. Note: a benign console warning appears during scene mount ('Please ensure that the container has a non-static position...') — usually triggered by framer-motion before the section ref renders. Non-blocking.",
+    "BackgroundStage: tubewell inset is hidden on `lg:` breakpoints only; on 1440 viewport it is visible correctly. No issue.",
+    "BottleScene: cap y translates up to -320px via clip-path 'inset(0 0 88.5% 0)'. Verified in DOM cap image has translate transform of -158px at ~y=3100 (progress ≈ 0.664), reaching greater translation as user continues scrolling — cap-lift works as designed.",
+    "ChapterRail stops at [0.05, 0.28, 0.5, 0.65, 0.8, 0.95] correspond reasonably to chapter progress ranges. All rail testids present."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "n/a",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Static site, no backend. Testing at viewport 1440x900. Story track is 6*100vh (5400px story region → progress 0..1 over scrollY 0..4500). Chapter probes: Hero ~y=100, Source ~y=1260, Purity ~y=2160, Reveal/cap-lift ~y=2925-3240, People ~y=3735, Mission ~y=4320, Footer starts past ~y=5400. IMPORTANT: html has scroll-behavior:smooth. When using window.scrollTo(), always wait 600-800ms and re-read window.scrollY before asserting on framer-motion opacities/transforms — quick successive scrollTos may not reach the target y in time (framer-motion opacities remained stale at 0 in first pass). Verified all data-testids present: site-nav, brand-link, nav-source/purity/people/mission, cta-order, chapter-rail, rail-hero..rail-mission, scroll-progress, bottle-scene, chapter-hero..chapter-mission, cta-learn-more, cta-order-mission, site-footer, social-in/fb/x/ig. No horizontal scrollbar at 1440/1920/390. Chapter rail correctly hidden (display:none) on mobile 390. Nav is position:fixed with z-index 60; mission chapter heading sits at y=311 while nav bottom is at y=93 → no overlap. Cap-lift verified via cap <img> transform matrix showing negative translateY (-158px at progress 0.664, -232px at 0.717, -286px at 0.755).",
+  "verification_notes": {
+    "hero_load": "PASS — 'PROLOGUE · প্রকৃতির জল' and 'Nature, bottled with reverence.' visible at y=0",
+    "source_chapter_28pct": "PASS — chapter-source overlay opacity=1 at y=1260, village background visible, tubewell inset visible bottom-right (lg breakpoint), stats block 220ft / 7.2 pH / 0 km present",
+    "purity_chapter_48pct": "PASS — 'Seven layers, one silence.' + 7-filter list including Bengali 'নির্মলতা' visible at y=2160",
+    "cap_lift_65_72pct": "PASS — cap <img> transform shows translateY of -158px @ y=3100, -232px @ y=3400 (progressive lift)",
+    "people_chapter_83pct": "PASS — twin-portrait background visible, glass-morphism card 'A sip that knows no border.' bottom-left at y=3735",
+    "epilogue_mission_95pct": "PASS — 'We are only borrowing the water.' with 'Read the promise' + 'Order a case' CTAs visible at y=4320",
+    "footer": "PASS — bilingual marquee (Prokritir Jol · প্রকৃতির জল · Nature's Water · সবার জন্য বিশুদ্ধতা · 500 ml · Since 2024), Explore/Company/Contact columns, copyright + FSSAI license all render",
+    "nav_click_navigation": "PASS — nav-people click scrolled to y=3588; rail-purity click scrolled to y=1800 (anchors have absolute-positioned 1x1 markers computing to correct offsets)",
+    "chapter_rail_desktop": "PASS — visible on 1440 with 6 numbered 00-05 dots; hidden on mobile 390 (display:none)",
+    "scroll_progress_bar": "PASS — scaleX = 0.43 at y=2000 (~44% through story), grows linearly",
+    "responsive_no_horizontal_overflow": "PASS — 1440x900, 1920x1080, and 390x844 all show scrollWidth == clientWidth",
+    "mission_vs_nav_overlap": "PASS — nav bottom=93px, mission heading top=311px, mission text does not overlap nav during transition",
+    "console_errors": "Only one benign framer-motion warning about scroll container position; no page errors."
+  }
+}
