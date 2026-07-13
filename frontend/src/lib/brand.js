@@ -1,5 +1,7 @@
 // Central image constants + brand copy
-export const BOTTLE_IMG = "https://customer-assets.emergentagent.com/job_3a85e111-a2bb-4dcc-b4be-235baecdb764/artifacts/nyuaa9w0_jhvhjxavs%201.png";
+// Bottle is bundled locally in /public so it works on any deployment (Vercel, Netlify, self-hosted)
+// without depending on the Emergent CDN.
+export const BOTTLE_IMG = "/bottle.png";
 
 export const IMAGES = {
   village: "https://images.unsplash.com/photo-1773023785875-9ea8c6717559?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzN8MHwxfHNlYXJjaHwyfHxydXJhbCUyMHZpbGxhZ2UlMjBsdXNoJTIwZ3JlZW4lMjBsYW5kc2NhcGV8ZW58MHx8fHwxNzgzNzUzMjU3fDA&ixlib=rb-4.1.0&q=85",
