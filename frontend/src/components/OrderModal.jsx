@@ -13,7 +13,7 @@ const emptyCustomer = {
 };
 
 const OrderModal = () => {
-  const { isOpen, close, presetSku } = useOrder();
+  const { isOpen, close, presetSku, category } = useOrder();
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
@@ -22,6 +22,16 @@ const OrderModal = () => {
   const [customer, setCustomer] = useState(emptyCustomer);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  const getProductImage = (p) => {
+    if (p.sku.startsWith("PJ-")) return BOTTLE_IMG;
+    if (p.sku === "PM-TURM-250") return "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=compress&cs=tinysrgb&w=120&q=80";
+    if (p.sku === "PM-CHILI-250") return "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=compress&cs=tinysrgb&w=120&q=80";
+    if (p.sku === "PM-CUMIN-250") return "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=compress&cs=tinysrgb&w=120&q=80";
+    if (p.sku.startsWith("PM-")) return "https://images.unsplash.com/photo-1596790011462-840c6b1f2351?auto=compress&cs=tinysrgb&w=120&q=80";
+    if (p.sku.startsWith("PC-")) return "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=compress&cs=tinysrgb&w=120&q=80";
+    return BOTTLE_IMG;
+  };
 
   // Load products once
   useEffect(() => {
@@ -96,12 +106,16 @@ const OrderModal = () => {
     }
   };
 
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => (p.category || "water") === category);
+  }, [products, category]);
+
   // Group products by size for cleaner layout
   const groups = useMemo(() => {
     const g = {};
-    products.forEach((p) => { (g[p.size] = g[p.size] || []).push(p); });
+    filteredProducts.forEach((p) => { (g[p.size] = g[p.size] || []).push(p); });
     return g;
-  }, [products]);
+  }, [filteredProducts]);
 
   return (
     <AnimatePresence>
@@ -140,9 +154,14 @@ const OrderModal = () => {
                   <ShoppingBag className="h-4 w-4 text-cyan-200" />
                 </div>
                 <div>
-                  <div className="chapter-tag mb-1">Order · Prokritir Jol</div>
+                  <div className="chapter-tag mb-1">
+                    Order · {category === "masala" ? "Prokritir Masala" : category === "chai" ? "Prokritir Chai" : "Prokritir Jol"}
+                  </div>
                   <div className="font-display text-2xl md:text-3xl">
-                    {step === 1 ? "Choose your bottles" : "Where should we send it?"}
+                    {step === 1 
+                      ? (category === "masala" ? "Choose your spices" : category === "chai" ? "Choose your tea blend" : "Choose your bottles")
+                      : "Where should we send it?"
+                    }
                   </div>
                 </div>
               </div>
@@ -158,25 +177,29 @@ const OrderModal = () => {
                 <div className="space-y-8" data-testid="products-step">
                   {Object.entries(groups).map(([size, items]) => (
                     <div key={size}>
-                      <div className="text-xs tracking-[0.25em] uppercase text-white/60 mb-3">{size} bottles</div>
+                      <div className="text-xs tracking-[0.25em] uppercase text-white/60 mb-3">
+                        {size} {category === "water" ? "bottles" : "pack"}
+                      </div>
                       <div className="grid gap-3">
                         {items.map((p) => {
-                          const qty = cart[p.sku] || 0;
-                          return (
-                            <div
-                              key={p.sku}
-                              className={`flex items-center gap-4 p-4 rounded-xl border ${qty > 0 ? "border-cyan-300/40 bg-cyan-300/5" : "border-white/10 bg-white/[0.02]"} transition-colors`}
-                              data-testid={`product-${p.sku}`}
-                            >
-                              <div className="h-14 w-9 rounded-md bg-black/40 border border-white/10 flex items-center justify-center overflow-hidden">
-                                <img src={BOTTLE_IMG} alt="" className="h-full object-contain" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="font-medium">{p.label}</div>
-                                <div className="text-white/55 text-sm">{p.size} {p.pack > 1 ? `× ${p.pack} bottles` : ""}</div>
-                              </div>
-                              <div className="font-display text-lg text-white/95 mr-4">{inr(p.price)}</div>
-                              <div className="flex items-center gap-2">
+                           const qty = cart[p.sku] || 0;
+                           return (
+                             <div
+                               key={p.sku}
+                               className={`flex items-center gap-4 p-4 rounded-xl border ${qty > 0 ? "border-cyan-300/40 bg-cyan-300/5" : "border-white/10 bg-white/[0.02]"} transition-colors`}
+                               data-testid={`product-${p.sku}`}
+                             >
+                               <div className="h-14 w-14 rounded-md bg-black/40 border border-white/10 flex items-center justify-center overflow-hidden">
+                                 <img src={getProductImage(p)} alt="" className="h-full w-full object-cover" />
+                               </div>
+                               <div className="flex-1">
+                                 <div className="font-medium">{p.label}</div>
+                                 <div className="text-white/55 text-sm">
+                                   {p.name} · {p.size}
+                                 </div>
+                               </div>
+                               <div className="font-display text-lg text-white/95 mr-4">{inr(p.price)}</div>
+                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={() => setQty(p.sku, -1)}
                                   disabled={qty === 0}

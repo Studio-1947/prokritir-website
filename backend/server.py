@@ -25,12 +25,24 @@ api_router = APIRouter(prefix="/api")
 
 # ─────────────────────────────  PRODUCT CATALOG  ─────────────────────────────
 PRODUCTS = [
-    {"sku": "PJ-500-1",  "name": "Prokritir Jol 500 ml",       "size": "500 ml",   "pack": 1,   "price": 20,  "label": "Single Bottle"},
-    {"sku": "PJ-500-12", "name": "Prokritir Jol 500 ml x 12",  "size": "500 ml",   "pack": 12,  "price": 200, "label": "12-Pack Case"},
-    {"sku": "PJ-500-24", "name": "Prokritir Jol 500 ml x 24",  "size": "500 ml",   "pack": 24,  "price": 380, "label": "24-Pack Case"},
-    {"sku": "PJ-1L-1",   "name": "Prokritir Jol 1 L",          "size": "1 L",      "pack": 1,   "price": 40,  "label": "Single Bottle"},
-    {"sku": "PJ-1L-12",  "name": "Prokritir Jol 1 L x 12",     "size": "1 L",      "pack": 12,  "price": 400, "label": "12-Pack Case"},
-    {"sku": "PJ-1L-24",  "name": "Prokritir Jol 1 L x 24",     "size": "1 L",      "pack": 24,  "price": 760, "label": "24-Pack Case"},
+    # Water (Prokritir Jol)
+    {"sku": "PJ-500-1",  "name": "Prokritir Jol 500 ml",       "size": "500 ml",   "pack": 1,   "price": 20,  "label": "Single Bottle", "category": "water"},
+    {"sku": "PJ-500-12", "name": "Prokritir Jol 500 ml x 12",  "size": "500 ml",   "pack": 12,  "price": 200, "label": "12-Pack Case", "category": "water"},
+    {"sku": "PJ-500-24", "name": "Prokritir Jol 500 ml x 24",  "size": "500 ml",   "pack": 24,  "price": 380, "label": "24-Pack Case", "category": "water"},
+    {"sku": "PJ-1L-1",   "name": "Prokritir Jol 1 L",          "size": "1 L",      "pack": 1,   "price": 40,  "label": "Single Bottle", "category": "water"},
+    {"sku": "PJ-1L-12",  "name": "Prokritir Jol 1 L x 12",     "size": "1 L",      "pack": 12,  "price": 400, "label": "12-Pack Case", "category": "water"},
+    {"sku": "PJ-1L-24",  "name": "Prokritir Jol 1 L x 24",     "size": "1 L",      "pack": 24,  "price": 760, "label": "24-Pack Case", "category": "water"},
+
+    # Spices (Prokritir Masala)
+    {"sku": "PM-TRIO",     "name": "Prokritir Masala Trio Combo", "size": "Trio Pack", "pack": 1, "price": 199, "label": "Turmeric + Chili + Cumin (100g each)", "category": "masala"},
+    {"sku": "PM-TURM-250",  "name": "Prokritir Turmeric (হলুদ)",   "size": "250 g",     "pack": 1, "price": 75,  "label": "Pure Turmeric Powder", "category": "masala"},
+    {"sku": "PM-CHILI-250", "name": "Prokritir Red Chili (লঙ্কা)",  "size": "250 g",     "pack": 1, "price": 95,  "label": "Spicy Red Chili Powder", "category": "masala"},
+    {"sku": "PM-CUMIN-250", "name": "Prokritir Cumin (জিরে)",     "size": "250 g",     "pack": 1, "price": 120, "label": "Roasted Cumin Powder", "category": "masala"},
+
+    # Tea (Prokritir Chai)
+    {"sku": "PC-CTC-250",   "name": "Prokritir CTC Chai (সিটিসি)", "size": "250 g",     "pack": 1, "price": 110, "label": "Premium Assam CTC Blend", "category": "chai"},
+    {"sku": "PC-ORTH-250",  "name": "Prokritir Darjeeling Leaf",   "size": "250 g",     "pack": 1, "price": 240, "label": "Pure Orthodox Darjeeling", "category": "chai"},
+    {"sku": "PC-MASALA-250", "name": "Prokritir Spiced Chai (মশলা)","size": "250 g",     "pack": 1, "price": 165, "label": "Traditional Spiced Tea Blend", "category": "chai"},
 ]
 PRODUCT_BY_SKU = {p["sku"]: p for p in PRODUCTS}
 
@@ -90,11 +102,11 @@ async def list_products():
     return PRODUCTS
 
 
-def _short_order_number() -> str:
+def _short_order_number(prefix: str = "PJ") -> str:
     # Human-friendly: PJ-YYMMDD-XXXX
     now = datetime.now(timezone.utc)
     suffix = uuid.uuid4().hex[:4].upper()
-    return f"PJ-{now.strftime('%y%m%d')}-{suffix}"
+    return f"{prefix}-{now.strftime('%y%m%d')}-{suffix}"
 
 
 @api_router.post("/orders", response_model=Order)
@@ -102,10 +114,18 @@ async def create_order(payload: OrderCreate):
     # Resolve line items & compute totals server-side (never trust client prices)
     items: List[OrderItem] = []
     subtotal = 0
+    prefix = "PJ"
     for li in payload.items:
         product = PRODUCT_BY_SKU.get(li.sku)
         if not product:
             raise HTTPException(status_code=400, detail=f"Unknown SKU: {li.sku}")
+        
+        # Resolve order number prefix based on first non-water SKU
+        if li.sku.startswith("PM-"):
+            prefix = "PM"
+        elif li.sku.startswith("PC-"):
+            prefix = "PC"
+            
         line_total = product["price"] * li.quantity
         subtotal += line_total
         items.append(OrderItem(
@@ -123,7 +143,7 @@ async def create_order(payload: OrderCreate):
     total = subtotal + shipping
 
     order_id = str(uuid.uuid4())
-    order_number = _short_order_number()
+    order_number = _short_order_number(prefix)
     created_at = datetime.now(timezone.utc).isoformat()
 
     order = Order(
