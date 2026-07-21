@@ -3,6 +3,13 @@
 // without depending on the Emergent CDN.
 export const BOTTLE_IMG = "/bottle.png";
 
+// Two-part bottle used by the scroll scene: the body keeps the tamper ring,
+// the cap is a separate layer that lifts off. These are web-sized derivatives
+// of bottle-nocap.png / bottle-cap.png (the originals are print-resolution and
+// far too large to ship to a browser).
+export const BOTTLE_BODY_IMG = "/bottle-nocap-web.png";
+export const BOTTLE_CAP_IMG = "/bottle-cap-web.png";
+
 export const IMAGES = {
   village: "https://images.unsplash.com/photo-1773023785875-9ea8c6717559?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzN8MHwxfHNlYXJjaHwyfHxydXJhbCUyMHZpbGxhZ2UlMjBsdXNoJTIwZ3JlZW4lMjBsYW5kc2NhcGV8ZW58MHx8fHwxNzgzNzUzMjU3fDA&ixlib=rb-4.1.0&q=85",
   tubewell: "https://images.unsplash.com/photo-1677907564161-7279d5aac75f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHwxfHxoYW5kJTIwcHVtcCUyMHdhdGVyJTIwdmlsbGFnZXxlbnwwfHx8fDE3ODM3NTMyNzB8MA&ixlib=rb-4.1.0&q=85",
