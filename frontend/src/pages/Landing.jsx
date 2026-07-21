@@ -4,7 +4,6 @@ import Nav from "@/components/Nav";
 import BackgroundStage from "@/components/BackgroundStage";
 import BottleScene from "@/components/BottleScene";
 import StoryOverlay from "@/components/StoryOverlay";
-import ChapterRail from "@/components/ChapterRail";
 import Footer from "@/components/Footer";
 import { CHAPTERS } from "@/lib/brand";
 
@@ -28,7 +27,6 @@ const Landing = () => {
   return (
     <div className="relative bg-[#061021] text-white">
       <Nav />
-      <ChapterRail progress={progress} />
 
       {/* Top progress bar */}
       <motion.div

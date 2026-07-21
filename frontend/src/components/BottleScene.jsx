@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, useTransform } from "framer-motion";
-import { BOTTLE_IMG } from "@/lib/brand";
+import { BOTTLE_BODY_IMG, BOTTLE_CAP_IMG } from "@/lib/brand";
 
 /**
  * BottleScene - sticky bottle that reacts to scrollYProgress (0 → 1)
@@ -18,8 +18,19 @@ import { BOTTLE_IMG } from "@/lib/brand";
  * misbehaves on any browser.
  */
 
-// Natural aspect ratio of the bottle PNG: 579 × 1168 → keep it exact
-const BOTTLE_ASPECT = 579 / 1168; // ≈ 0.4957
+// Natural aspect ratio of the body PNG: 620 × 1850 → keep it exact
+const BOTTLE_ASPECT = 620 / 1850; // ≈ 0.3351
+const CAP_ASPECT = 620 / 285; // ≈ 2.1754
+
+// Measured off the body art: the neck/tamper ring is 49% of the bottle's width,
+// centred at 50.3%, and its underside sits 5.2% down from the top of the image.
+const CAP_WIDTH_FRAC = 0.5; // cap width, as a fraction of bottle width
+const CAP_CENTER_FRAC = 0.503;
+const RING_BOTTOM_FRAC = 0.052; // fraction of bottle height
+// Cap height expressed in bottle-height units, so the sealed cap can be parked
+// with its lower edge exactly on the ring.
+const CAP_HEIGHT_FRAC = (CAP_WIDTH_FRAC * BOTTLE_ASPECT) / CAP_ASPECT; // ≈ 0.077
+const CAP_TOP_FRAC = RING_BOTTOM_FRAC - CAP_HEIGHT_FRAC; // ≈ -0.025
 
 const BottleScene = ({ progress }) => {
   const bottleY = useTransform(progress, [0, 0.5, 0.85], [0, -20, 60]);
@@ -86,29 +97,31 @@ const BottleScene = ({ progress }) => {
         }}
         className="relative bottle-glow"
       >
-        {/* Bottle body — top 11.5% clipped away, cap layer will sit on top */}
+        {/* Bottle body — capless art, the tamper ring stays behind */}
         <img
-          src={BOTTLE_IMG}
+          src={BOTTLE_BODY_IMG}
           alt="Prokritir Jol water bottle"
           draggable={false}
           className="absolute inset-0 h-full w-full object-contain select-none"
-          style={{ clipPath: "inset(11.5% 0 0 0)" }}
         />
 
-        {/* Cap layer — animates upward on scroll */}
+        {/* Cap — its own art, parked on the ring until the seal breaks */}
         <motion.img
-          src={BOTTLE_IMG}
+          src={BOTTLE_CAP_IMG}
           alt=""
           draggable={false}
           aria-hidden
           style={{
+            top: `${CAP_TOP_FRAC * 100}%`,
+            left: `${CAP_CENTER_FRAC * 100}%`,
+            width: `${CAP_WIDTH_FRAC * 100}%`,
+            x: "-50%",
             y: capY,
             rotate: capRotate,
             opacity: capOpacity,
-            clipPath: "inset(0 0 88.5% 0)",
-            transformOrigin: "50% 30%",
+            transformOrigin: "50% 100%",
           }}
-          className="absolute inset-0 h-full w-full object-contain select-none"
+          className="absolute h-auto select-none"
         />
 
         {/* Water droplet trail when cap opens */}
