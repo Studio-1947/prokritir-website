@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { useOrder } from "@/lib/orderContext";
 import { Leaf, Award, Sun, ShieldCheck } from "lucide-react";
+import { PRODUCT_IMAGES } from "@/lib/brand";
 
 const Chai = () => {
   const { open } = useOrder();
@@ -18,21 +19,21 @@ const Chai = () => {
       name: "Premium Assam CTC Chai",
       desc: "Bold taste, deep golden color, perfect for milk tea",
       price: 110,
-      img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=compress&cs=tinysrgb&w=500&q=80"
+      img: PRODUCT_IMAGES["PC-CTC-250"]
     },
     {
       sku: "PC-ORTH-250",
       name: "Darjeeling Orthodox Leaf",
       desc: "Delicate musk flavor, floral aroma, hand-plucked",
       price: 240,
-      img: "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=compress&cs=tinysrgb&w=500&q=80"
+      img: PRODUCT_IMAGES["PC-ORTH-250"]
     },
     {
       sku: "PC-MASALA-250",
       name: "Spiced Masala Chai",
       desc: "Infused with organic cardamom, cinnamon, and dry ginger",
       price: 165,
-      img: "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?auto=compress&cs=tinysrgb&w=500&q=80"
+      img: PRODUCT_IMAGES["PC-MASALA-250"]
     }
   ];
 
@@ -107,7 +108,7 @@ const Chai = () => {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-[#07130c] via-transparent to-transparent z-10" />
               <img
-                src="https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=compress&cs=tinysrgb&w=800&q=80"
+                src={PRODUCT_IMAGES["PC-ORTH-250"]}
                 alt="Prokritir Chai tea leaves"
                 className="w-full h-full object-cover select-none"
               />

@@ -26,7 +26,7 @@ const Landing = () => {
   // Total story track = ~6 viewport heights, giving each chapter breathing room.
   return (
     <div className="relative bg-[#061021] text-white">
-      <Nav />
+      <Nav progress={progress} />
 
       {/* Top progress bar */}
       <motion.div

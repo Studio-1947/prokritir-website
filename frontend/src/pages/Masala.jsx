@@ -3,7 +3,30 @@ import { motion } from "framer-motion";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { useOrder } from "@/lib/orderContext";
-import { Leaf, Award, Compass, ShieldCheck } from "lucide-react";
+import { Leaf } from "lucide-react";
+import { PRODUCT_IMAGES } from "@/lib/brand";
+
+// Photography for the "Crafting Purity in Bengal" pillars.
+const processPillars = [
+  {
+    title: "Sourced Direct",
+    img: "https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c3BpY2VzJTIwZmFybWluZ3xlbnwwfHwwfHx8MA%3D%3D",
+    alt: "A farmer gathering seedlings in a Bengal paddy field",
+    body: "We work closely with small-holder organic farmers in Nadia and adjoining districts of Bengal, ensuring fair wages and direct-to-mill sourcing.",
+  },
+  {
+    title: "Slow-Ground Cold Process",
+    img: "https://images.unsplash.com/photo-1668957187059-9360b508216c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c3BpY2VzJTIwbWlsbHMlMjBmYWN0b3J5fGVufDB8fDB8fHww",
+    alt: "A traditional spice mill building",
+    body: "Commercial mills burn out natural spice oils due to heavy machine friction. Our grinding process is slow and temperature-controlled to preserve natural oils.",
+  },
+  {
+    title: "No Contaminants",
+    img: "https://imgs.search.brave.com/DPV23vA5P-NZrk1M5OpNyPchSWrf2FsjSKZQT9jZlbw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdw/cm94eS5kaXZlY2Ru/LmNvbS9ZZnhuQ2pi/aHYxTkJFTVJtY3VL/ZVNGc3RLX0tqclNn/a0duX3gyTllES084/L2c6Y2UvcnM6Zmls/bDoxMjAwOjY3NTox/L1ozTTZMeTlrYVha/bGMybDBaUzF6ZEc5/eVlXZGxMMlJwZG1W/cGJXRm5aUzlIWlhS/MGVVbHRZV2RsY3kw/eE5EUXdPVGM1Tnpj/MUxtcHdadz09Lndl/YnA",
+    alt: "A hand pointing at a product label listing what it does not contain",
+    body: "We run batch-wise quality tests. Our spices have absolutely zero artificial colors, synthetic fragrances, potato starch, or chemical preservatives.",
+  },
+];
 
 const Masala = () => {
   const { open } = useOrder();
@@ -18,28 +41,28 @@ const Masala = () => {
       name: "Essential Trio Combo",
       desc: "Turmeric + Chili + Cumin (100g each)",
       price: 199,
-      img: "https://images.unsplash.com/photo-1596790011462-840c6b1f2351?auto=compress&cs=tinysrgb&w=500&q=80"
+      img: PRODUCT_IMAGES["PM-TRIO"]
     },
     {
       sku: "PM-TURM-250",
       name: "Pure Turmeric Powder (হলুদ)",
       desc: "High curcumin content, slow-ground",
       price: 75,
-      img: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=compress&cs=tinysrgb&w=500&q=80"
+      img: PRODUCT_IMAGES["PM-TURM-250"]
     },
     {
       sku: "PM-CHILI-250",
       name: "Spicy Red Chili Powder (লঙ্কা)",
       desc: "Bright red color and bold pungency",
       price: 95,
-      img: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=compress&cs=tinysrgb&w=500&q=80"
+      img: PRODUCT_IMAGES["PM-CHILI-250"]
     },
     {
       sku: "PM-CUMIN-250",
       name: "Roasted Cumin Powder (জিরে)",
       desc: "Rich earthy aroma, traditional recipe",
       price: 120,
-      img: "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=compress&cs=tinysrgb&w=500&q=80"
+      img: PRODUCT_IMAGES["PM-CUMIN-250"]
     }
   ];
 
@@ -114,7 +137,7 @@ const Masala = () => {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-[#140b05] via-transparent to-transparent z-10" />
               <img
-                src="https://images.unsplash.com/photo-1596790011462-840c6b1f2351?auto=compress&cs=tinysrgb&w=800&q=80"
+                src={PRODUCT_IMAGES["PM-TRIO"]}
                 alt="Prokritir Masala spices"
                 className="w-full h-full object-cover select-none"
               />
@@ -136,35 +159,28 @@ const Masala = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl border border-amber-950 bg-[#1e1008]/40 hover:border-amber-900/60 transition-colors">
-              <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-                <Compass className="h-6 w-6 text-amber-400" />
+            {processPillars.map((pillar) => (
+              <div
+                key={pillar.title}
+                className="group relative aspect-[4/5] rounded-2xl border border-amber-950 hover:border-amber-900/60 transition-colors overflow-hidden"
+              >
+                <img
+                  src={pillar.img}
+                  alt={pillar.alt}
+                  loading="lazy"
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-cover select-none transition-transform duration-700 group-hover:scale-105"
+                />
+                {/* Scrim: opaque under the copy, clearing toward the top so the
+                    photograph still reads. The flat layer carries the darkest
+                    text; the gradient softens the seam above it. */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/10" />
+                <div className="absolute inset-x-0 bottom-0 p-7">
+                  <h3 className="text-lg font-medium text-amber-100 mb-2 drop-shadow">{pillar.title}</h3>
+                  <p className="text-sm text-amber-100/75 leading-relaxed drop-shadow">{pillar.body}</p>
+                </div>
               </div>
-              <h3 className="text-lg font-medium text-amber-200 mb-3">Sourced Direct</h3>
-              <p className="text-sm text-amber-200/50 leading-relaxed">
-                We work closely with small-holder organic farmers in Nadia and adjoining districts of Bengal, ensuring fair wages and direct-to-mill sourcing.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-2xl border border-amber-950 bg-[#1e1008]/40 hover:border-amber-900/60 transition-colors">
-              <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-                <Award className="h-6 w-6 text-amber-400" />
-              </div>
-              <h3 className="text-lg font-medium text-amber-200 mb-3">Slow-Ground Cold Process</h3>
-              <p className="text-sm text-amber-200/50 leading-relaxed">
-                Commercial mills burn out natural spice oils due to heavy machine friction. Our grinding process is slow and temperature-controlled to preserve natural oils.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-2xl border border-amber-950 bg-[#1e1008]/40 hover:border-amber-900/60 transition-colors">
-              <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-                <ShieldCheck className="h-6 w-6 text-amber-400" />
-              </div>
-              <h3 className="text-lg font-medium text-amber-200 mb-3">No Contaminants</h3>
-              <p className="text-sm text-amber-200/50 leading-relaxed">
-                We run batch-wise quality tests. Our spices have absolutely zero artificial colors, synthetic fragrances, potato starch, or chemical preservatives.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>

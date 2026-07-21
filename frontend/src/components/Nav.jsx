@@ -1,10 +1,29 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { BRAND } from "@/lib/brand";
+import { BRAND, LOGO_IMG } from "@/lib/brand";
 import { useOrder } from "@/lib/orderContext";
 
-const Nav = () => {
+// Each section's page background, so a solid header reads as part of the page
+// rather than a floating slab. Kept in sync with the page shells: Landing
+// #061021, Masala #140b05, Chai #07130c.
+const SURFACE = {
+  water: "6,16,33",
+  masala: "20,11,5",
+  chai: "7,19,12",
+};
+
+const SOLID_SHADOW = "0 10px 30px -12px rgba(0,0,0,0.75)";
+
+/**
+ * `progress` is the landing page's scrollYProgress. Over the water story the
+ * header is transparent, but the closing Mission chapter is centred copy on a
+ * flat background that runs straight under the bar — so from just before that
+ * chapter fades in (StoryOverlay starts it at 0.88) the header takes on a solid
+ * backdrop. The Spices and Tea pages are ordinary scrolling pages with no
+ * sticky scene behind the header, so there the bar is solid from the start.
+ */
+const Nav = ({ progress }) => {
   const { open } = useOrder();
   const location = useLocation();
   const activePath = location.pathname;
@@ -16,20 +35,56 @@ const Nav = () => {
   };
 
   const category = getCategory();
+  const alwaysSolid = category !== "water";
+  const surface = SURFACE[category];
+
+  const staticProgress = useMotionValue(0);
+  const scroll = progress || staticProgress;
+  const solidRange = [0.84, 0.9];
+  const barBg = useTransform(scroll, solidRange, [`rgba(${surface},0)`, `rgba(${surface},0.94)`]);
+  const barBlur = useTransform(scroll, solidRange, ["blur(0px)", "blur(14px)"]);
+  const barShadow = useTransform(scroll, solidRange, ["0 0 0 rgba(0,0,0,0)", SOLID_SHADOW]);
 
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      style={
+        alwaysSolid
+          ? {
+              backgroundColor: `rgba(${surface},0.94)`,
+              backdropFilter: "blur(14px)",
+              WebkitBackdropFilter: "blur(14px)",
+              boxShadow: SOLID_SHADOW,
+            }
+          : {
+              backgroundColor: barBg,
+              backdropFilter: barBlur,
+              WebkitBackdropFilter: barBlur,
+              boxShadow: barShadow,
+            }
+      }
       className="fixed top-0 left-0 right-0 z-[60]"
       data-testid="site-nav"
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-12 py-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group" data-testid="brand-link">
           <div className="relative">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#00E5FF]/30 via-transparent to-[#135033]/40 border border-white/15 backdrop-blur-md flex items-center justify-center">
-              <div className={`h-1.5 w-1.5 rounded-full ${category === "masala" ? "bg-amber-400" : category === "chai" ? "bg-emerald-400" : "bg-[#00E5FF]"}`} />
+            <div className={`h-9 w-9 rounded-full bg-gradient-to-br border backdrop-blur-md flex items-center justify-center transition-colors ${
+              category === "masala"
+                ? "from-amber-400/30 via-transparent to-[#5b3a12]/40 border-amber-300/25"
+                : category === "chai"
+                  ? "from-emerald-400/30 via-transparent to-[#135033]/40 border-emerald-300/25"
+                  : "from-[#00E5FF]/30 via-transparent to-[#135033]/40 border-white/15"
+            }`}>
+              <img
+                src={LOGO_IMG}
+                alt=""
+                aria-hidden
+                draggable={false}
+                className="h-5 w-auto select-none"
+              />
             </div>
           </div>
           <div className="leading-none">

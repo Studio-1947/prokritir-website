@@ -1,5 +1,5 @@
 import React from "react";
-import { BRAND } from "@/lib/brand";
+import { BRAND, LOGO_IMG } from "@/lib/brand";
 
 const Footer = () => {
   return (
@@ -24,7 +24,13 @@ const Footer = () => {
         <div>
           <div className="flex items-center gap-3">
             <div className="h-11 w-11 rounded-full border border-white/15 flex items-center justify-center bg-gradient-to-br from-[#00E5FF]/25 to-[#135033]/40 backdrop-blur-md">
-              <div className="h-1.5 w-1.5 rounded-full bg-cyan-200" />
+              <img
+                src={LOGO_IMG}
+                alt=""
+                aria-hidden
+                draggable={false}
+                className="h-6 w-auto select-none"
+              />
             </div>
             <div className="leading-none">
               <div className="font-display text-2xl text-white">{BRAND.name}</div>
