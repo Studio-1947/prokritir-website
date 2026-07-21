@@ -4,7 +4,7 @@ import { X, Plus, Minus, Loader2, MapPin, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "@/lib/orderContext";
 import { listProducts, createOrder } from "@/lib/api";
-import { BOTTLE_IMG } from "@/lib/brand";
+import { BOTTLE_IMG, PRODUCT_IMAGES, CATEGORY_FALLBACK_IMAGE } from "@/lib/brand";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -25,11 +25,9 @@ const OrderModal = () => {
 
   const getProductImage = (p) => {
     if (p.sku.startsWith("PJ-")) return BOTTLE_IMG;
-    if (p.sku === "PM-TURM-250") return "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=compress&cs=tinysrgb&w=120&q=80";
-    if (p.sku === "PM-CHILI-250") return "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=compress&cs=tinysrgb&w=120&q=80";
-    if (p.sku === "PM-CUMIN-250") return "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=compress&cs=tinysrgb&w=120&q=80";
-    if (p.sku.startsWith("PM-")) return "https://images.unsplash.com/photo-1596790011462-840c6b1f2351?auto=compress&cs=tinysrgb&w=120&q=80";
-    if (p.sku.startsWith("PC-")) return "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=compress&cs=tinysrgb&w=120&q=80";
+    if (PRODUCT_IMAGES[p.sku]) return PRODUCT_IMAGES[p.sku];
+    if (p.sku.startsWith("PM-")) return CATEGORY_FALLBACK_IMAGE.masala;
+    if (p.sku.startsWith("PC-")) return CATEGORY_FALLBACK_IMAGE.chai;
     return BOTTLE_IMG;
   };
 

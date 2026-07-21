@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, Loader2, ArrowLeft, Copy } from "lucide-react";
 import { getOrder } from "@/lib/api";
-import { BOTTLE_IMG, BRAND } from "@/lib/brand";
+import { BOTTLE_IMG, BRAND, LOGO_IMG } from "@/lib/brand";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -38,7 +38,13 @@ const Success = () => {
       <div className="relative z-10 mx-auto max-w-[1400px] px-6 md:px-12 py-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group" data-testid="success-home-link">
           <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#00E5FF]/30 to-[#135033]/40 border border-white/15 flex items-center justify-center">
-            <div className="h-1.5 w-1.5 rounded-full bg-cyan-200" />
+            <img
+              src={LOGO_IMG}
+              alt=""
+              aria-hidden
+              draggable={false}
+              className="h-5 w-auto select-none"
+            />
           </div>
           <div className="leading-none">
             <div className="font-display text-[19px]">{BRAND.name}</div>
