@@ -11,8 +11,12 @@ export const LOGO_IMG = "/logo.png";
 // the cap is a separate layer that lifts off. These are web-sized derivatives
 // of bottle-nocap.png / bottle-cap.png (the originals are print-resolution and
 // far too large to ship to a browser).
-export const BOTTLE_BODY_IMG = "/bottle-nocap-web.png";
-export const BOTTLE_CAP_IMG = "/bottle-cap-web.png";
+export const BOTTLE_BODY_IMG = "/prokritir-jol-bottle-web.png";
+// bottle-cap-trim.png is Object-web.png cropped to the cap's actual pixels:
+// the source had ~21 rows of dead space under the skirt plus a sliver of opaque
+// crop junk in the bottom-left corner, both of which threw off the alignment
+// maths in BottleScene (which anchors the cap off the image box, not the art).
+export const BOTTLE_CAP_IMG = "/bottle-cap-trim.png";
 
 // Per-SKU product photography, keyed the same way the backend catalog is.
 // Single source of truth: the section pages and the order modal both read from
