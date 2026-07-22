@@ -39,7 +39,10 @@ const BackgroundStage = ({ progress }) => {
         <div className="absolute inset-0 bg-gradient-to-b from-[#061021]/70 via-[#061021]/25 to-[#061021]/90" />
         {/* Corner tubewell inset */}
         <div className="absolute bottom-10 right-10 hidden lg:block">
-          <div className="relative h-56 w-40 rounded-xl overflow-hidden border border-white/10 backdrop-blur-md">
+          {/* No backdrop-blur — the <img> below covers this box edge to edge,
+              so the filter was invisible while still forcing a backdrop copy
+              on every frame of the scroll. */}
+          <div className="relative h-56 w-40 rounded-xl overflow-hidden border border-white/10">
             <img src={IMAGES.tubewell} alt="Deep tubewell" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
             <div className="absolute bottom-3 left-3 right-3 text-[10px] tracking-[0.25em] uppercase text-white/85">

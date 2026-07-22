@@ -44,7 +44,11 @@ const Landing = () => {
           <StoryOverlay progress={progress} />
 
           {/* Bottom bar with brand ticker */}
-          <div className="absolute bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-black/30 backdrop-blur-md">
+          {/* Solid tint rather than backdrop-blur: a backdrop-filter forces the
+              compositor to re-copy and re-blur whatever is behind it, and what
+              is behind it here is the animating bottle scene — so it re-ran on
+              every scroll frame for a bar of small type. */}
+          <div className="absolute bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-[#04101f]/85">
             <div className="mx-auto max-w-[1400px] px-6 md:px-12 py-3 flex items-center justify-between text-[11px] tracking-[0.25em] uppercase text-white/60">
               <span>প্রকৃতির জল · Prokritir Jol</span>
               <span className="hidden md:inline">500 ml · RO Purified · Nadia, West Bengal</span>

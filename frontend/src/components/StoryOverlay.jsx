@@ -65,7 +65,7 @@ const StoryOverlay = ({ progress }) => {
         className="absolute inset-0 flex items-center px-6 md:px-16"
         data-testid="chapter-source"
       >
-        <div className="max-w-lg w-full p-6 md:p-0 bg-black/45 border border-white/5 md:border-transparent backdrop-blur-md md:backdrop-blur-none rounded-2xl">
+        <div className="max-w-lg w-full p-6 md:p-0 bg-black/70 md:bg-black/45 border border-white/5 md:border-transparent rounded-2xl">
           <div className="chapter-tag mb-6">Chapter 01 — The Source</div>
           <h2 className="font-display text-4xl md:text-6xl leading-[1.02] text-white">
             From the deep earth of <span className="italic text-emerald-200">Bangla</span>.
@@ -98,7 +98,7 @@ const StoryOverlay = ({ progress }) => {
         className="absolute inset-0 flex items-center justify-end px-6 md:px-16"
         data-testid="chapter-purity"
       >
-        <div className="max-w-lg text-right w-full p-6 md:p-0 bg-black/45 border border-white/5 md:border-transparent backdrop-blur-md md:backdrop-blur-none rounded-2xl ml-auto">
+        <div className="max-w-lg text-right w-full p-6 md:p-0 bg-black/70 md:bg-black/45 border border-white/5 md:border-transparent rounded-2xl ml-auto">
           <div className="chapter-tag mb-6">Chapter 02 — Purification</div>
           <h2 className="font-display text-4xl md:text-6xl leading-[1.02] text-white">
             Seven layers, <span className="italic text-cyan-200/90">one silence.</span>
@@ -123,7 +123,7 @@ const StoryOverlay = ({ progress }) => {
         className="absolute inset-x-0 top-[62%] flex justify-center px-6"
         data-testid="chapter-reveal"
       >
-        <div className="text-center max-w-md w-full p-6 bg-black/45 border border-white/5 md:border-transparent backdrop-blur-md md:backdrop-blur-none rounded-2xl mx-auto">
+        <div className="text-center max-w-md w-full p-6 bg-black/70 md:bg-black/45 border border-white/5 md:border-transparent rounded-2xl mx-auto">
           <div className="chapter-tag mb-4">Chapter 03 — The Seal</div>
           <h3 className="font-display text-3xl md:text-5xl italic text-cyan-100">
             The first breath of air.
@@ -141,7 +141,7 @@ const StoryOverlay = ({ progress }) => {
         data-testid="chapter-people"
       >
         <div className="w-full flex items-end justify-between gap-10">
-          <div className="max-w-md backdrop-blur-md bg-black/30 border border-white/10 rounded-2xl p-8">
+          <div className="max-w-md bg-black/55 border border-white/10 rounded-2xl p-8">
             <div className="chapter-tag mb-4">Chapter 04 — For Every Thirst</div>
             <h2 className="font-display text-3xl md:text-5xl leading-[1.05] text-white">
               A sip that knows <br/> no border.
