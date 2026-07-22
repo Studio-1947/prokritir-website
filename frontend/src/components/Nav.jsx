@@ -48,7 +48,16 @@ const Nav = ({ progress }) => {
   const scroll = progress || staticProgress;
   const solidRange = [0.84, 0.9];
   const barBg = useTransform(scroll, solidRange, [`rgba(${surface},0)`, `rgba(${surface},0.94)`]);
-  const barBlur = useTransform(scroll, solidRange, ["blur(0px)", "blur(14px)"]);
+  // Resolves to the keyword `none` below the threshold rather than `blur(0px)`.
+  // Any non-`none` backdrop-filter — zero-radius included — makes the element a
+  // backdrop root, so the compositor copies and filters what is behind it every
+  // frame. For most of the water story that is the full animating bottle scene,
+  // paid for an effect that is not yet visible.
+  const barBlur = useTransform(scroll, (v) => {
+    if (v <= solidRange[0]) return "none";
+    const t = Math.min(1, (v - solidRange[0]) / (solidRange[1] - solidRange[0]));
+    return `blur(${(t * 14).toFixed(1)}px)`;
+  });
   const barShadow = useTransform(scroll, solidRange, ["0 0 0 rgba(0,0,0,0)", SOLID_SHADOW]);
 
   return (

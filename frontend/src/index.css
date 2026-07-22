@@ -59,8 +59,13 @@ body {
     pointer-events: none;
     z-index: 1;
     background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    opacity: 0.45;
-    mix-blend-mode: overlay;
+    /* No mix-blend-mode: a blend mode makes the compositor read back
+       everything painted beneath this layer, and beneath it is the whole
+       cross-fading background stage — i.e. a full-viewport readback on every
+       scroll frame. Plain opacity composites for free. The noise is white on
+       transparent, so straight alpha lands very close to `overlay` over these
+       dark backgrounds; the value is lowered to match the previous weight. */
+    opacity: 0.22;
 }
 
 /* Custom cursor for interactive elements */
@@ -85,10 +90,31 @@ body {
 }
 .pj-float { animation: pj-float 6s ease-in-out infinite; }
 
-/* Bottle glow - optimized to prevent heavy repaints during scroll transformations */
+/* Bottle contact shadow.
+   This used to be `filter: drop-shadow(...)`, which is the single most
+   expensive thing you can put on a scroll-driven element: drop-shadow reads
+   the alpha of the entire subtree — here a 579x1850 bottle — blurs it, and
+   redoes that work every time the layer's raster scale changes. The wrapper
+   animates both scale and rotate continuously, so it was re-blurring the
+   bottle on every frame of the scroll.
+   The ::after below is a plain radial gradient: soft by construction, so it
+   needs no filter, and it rides along as part of the same composited layer. */
 .bottle-glow {
-    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
+    position: relative;
     will-change: transform;
+}
+.bottle-glow::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -3%;
+    width: 62%;
+    height: 7%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.22) 45%, transparent 72%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* Water droplet */

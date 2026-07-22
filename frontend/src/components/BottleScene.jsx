@@ -69,17 +69,20 @@ const BottleScene = ({ progress }) => {
   return (
     <div
       className="pointer-events-none absolute inset-0 flex items-center justify-center"
-      style={{ perspective: "1200px" }}
       data-testid="bottle-scene"
     >
-      {/* ambient glow */}
+      {/* Ambient glow.
+          The gradient does its own softening, so there is no filter here. It
+          previously carried `blur-3xl` — a 64px Gaussian over a ~700x700 box —
+          on the same element whose `scale` animates 1 → 1.3 → 0.6. A filtered
+          layer is re-rastered whenever its raster scale changes, so that blur
+          was being recomputed on every frame of the whole scroll. Widening the
+          gradient's falloff reproduces the look at zero per-frame cost. */}
       <motion.div
-        style={{ scale: glowScale, opacity: glowOpacity }}
-        className="absolute h-[70vh] w-[70vh] rounded-full blur-3xl pointer-events-none"
+        style={{ scale: glowScale, opacity: glowOpacity, willChange: "transform, opacity" }}
+        className="absolute h-[70vh] w-[70vh] rounded-full pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,229,255,0.30),rgba(0,229,255,0.16)_28%,rgba(19,80,51,0.10)_52%,transparent_78%)]"
         aria-hidden
-      >
-        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,229,255,0.35),rgba(19,80,51,0.15)_40%,transparent_70%)]" />
-      </motion.div>
+      />
 
       {/* Concentric ripples */}
       <motion.div
@@ -101,7 +104,6 @@ const BottleScene = ({ progress }) => {
           scale: bottleScale,
           rotate: bottleRotate,
           opacity: bottleOpacity,
-          transformStyle: "preserve-3d",
           willChange: "transform, opacity",
         }}
         className="relative bottle-glow"
