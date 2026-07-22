@@ -18,19 +18,27 @@ import { BOTTLE_BODY_IMG, BOTTLE_CAP_IMG } from "@/lib/brand";
  * misbehaves on any browser.
  */
 
-// Natural aspect ratio of the body PNG: 620 × 1850 → keep it exact
-const BOTTLE_ASPECT = 620 / 1850; // ≈ 0.3351
-const CAP_ASPECT = 620 / 285; // ≈ 2.1754
+// Natural aspect ratio of the body PNG: 579 × 1850 → keep it exact
+const BOTTLE_ASPECT = 579 / 1850; // ≈ 0.3130
 
-// Measured off the body art: the neck/tamper ring is 49% of the bottle's width,
-// centred at 50.3%, and its underside sits 5.2% down from the top of the image.
-const CAP_WIDTH_FRAC = 0.5; // cap width, as a fraction of bottle width
-const CAP_CENTER_FRAC = 0.503;
-const RING_BOTTOM_FRAC = 0.052; // fraction of bottle height
-// Cap height expressed in bottle-height units, so the sealed cap can be parked
-// with its lower edge exactly on the ring.
-const CAP_HEIGHT_FRAC = (CAP_WIDTH_FRAC * BOTTLE_ASPECT) / CAP_ASPECT; // ≈ 0.077
-const CAP_TOP_FRAC = RING_BOTTOM_FRAC - CAP_HEIGHT_FRAC; // ≈ -0.025
+// Everything below is measured off the body art's alpha channel, in its own
+// 579 × 1850 pixel space, then expressed as fractions:
+//   • the neck's axis sits at x = 292.5, i.e. 50.5% — NOT the image centre,
+//     so a cap centred at 50% reads as visibly off to the left
+//   • the support ring flares from y = 151, peaks 292px wide at y ≈ 174, and
+//     is back to neck width by y = 189
+//   • the neck's top rim starts at y = 1
+const NECK_CENTER_FRAC = 292.5 / 579; // ≈ 0.5052
+const CAP_WIDTH_FRAC = 292 / 579; // ≈ 0.5043 — cap outer Ø == support ring Ø
+const CAP_TOP_FRAC = 0; // cap crown covers the neck rim
+const CAP_BOTTOM_FRAC = 160 / 1850; // ≈ 0.0865 — biting just into the ring, so
+const CAP_HEIGHT_FRAC = CAP_BOTTOM_FRAC - CAP_TOP_FRAC; // no seam shows at 1×
+// The cap art (620 × 261 after trimming) is a ribbed skirt whose crown was cut
+// off by the original crop, so its natural aspect is ~2.37 — too squat to span
+// the neck at the ring's diameter. Both axes are therefore set explicitly and
+// the art takes a ~20% vertical stretch. On a band of vertical ribs that reads
+// as nothing at all, whereas honouring the aspect would leave a finger of bare
+// thread above the cap.
 
 const BottleScene = ({ progress }) => {
   const bottleY = useTransform(progress, [0, 0.5, 0.85], [0, -20, 60]);
@@ -94,6 +102,7 @@ const BottleScene = ({ progress }) => {
           rotate: bottleRotate,
           opacity: bottleOpacity,
           transformStyle: "preserve-3d",
+          willChange: "transform, opacity",
         }}
         className="relative bottle-glow"
       >
@@ -102,6 +111,10 @@ const BottleScene = ({ progress }) => {
           src={BOTTLE_BODY_IMG}
           alt="Prokritir Jol water bottle"
           draggable={false}
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+          }}
           className="absolute inset-0 h-full w-full object-contain select-none"
         />
 
@@ -113,21 +126,26 @@ const BottleScene = ({ progress }) => {
           aria-hidden
           style={{
             top: `${CAP_TOP_FRAC * 100}%`,
-            left: `${CAP_CENTER_FRAC * 100}%`,
+            left: `${NECK_CENTER_FRAC * 100}%`,
             width: `${CAP_WIDTH_FRAC * 100}%`,
+            height: `${CAP_HEIGHT_FRAC * 100}%`,
+            objectFit: "fill",
             x: "-50%",
             y: capY,
             rotate: capRotate,
             opacity: capOpacity,
             transformOrigin: "50% 100%",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            willChange: "transform, opacity",
           }}
-          className="absolute h-auto select-none"
+          className="absolute select-none"
         />
 
         {/* Water droplet trail when cap opens */}
         <motion.div
-          style={{ opacity: dropletOpacity }}
-          className="absolute top-[6%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+          style={{ opacity: dropletOpacity, left: `${NECK_CENTER_FRAC * 100}%` }}
+          className="absolute top-[6%] -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
           aria-hidden
         >
           {[0, 1, 2].map((i) => (

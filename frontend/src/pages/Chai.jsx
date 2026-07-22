@@ -3,8 +3,30 @@ import { motion } from "framer-motion";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { useOrder } from "@/lib/orderContext";
-import { Leaf, Award, Sun, ShieldCheck } from "lucide-react";
+import { Leaf } from "lucide-react";
 import { PRODUCT_IMAGES } from "@/lib/brand";
+
+// Photography for the "Grown by the Himalayan Mist" pillars.
+const gardenPillars = [
+  {
+    title: "High Altitude Estates",
+    img: "https://media.istockphoto.com/id/1483315452/photo/tea-plantations.webp?a=1&b=1&s=612x612&w=0&k=20&c=KEz540zyAvN8ZkGj9ChkdY_V2_JtCknpdgRkscRfd3M=",
+    alt: "Tea bushes on a hillside estate with mist over the valley beyond",
+    body: "Plucked from premium heritage estates in Darjeeling and the foothills of Dooars, where cool mountain air naturally slows leaf growth to concentrate flavor.",
+  },
+  {
+    title: "Orthodox Processing",
+    img: "https://images.unsplash.com/photo-1742967420200-3ea367a5e52f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8T3J0aG9kb3glMjBQcm9jZXNzaW5nfGVufDB8fDB8fHww",
+    alt: "A worker tending a processing line at a tea factory",
+    body: "Our premium Darjeeling selection is rolled and processed using orthodox methods, keeping the whole leaf intact to deliver the ultimate aromatic tea experience.",
+  },
+  {
+    title: "Chemical Free",
+    img: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=600&auto=format&fit=crop&q=60",
+    alt: "A clean green leaf with water droplets showing purity",
+    body: "Absolutely no synthetic flavors, dust fillers, or color coatings. Just pure, clean tea leaves processed to the highest safety and nutritional standards.",
+  },
+];
 
 const Chai = () => {
   const { open } = useOrder();
@@ -130,35 +152,27 @@ const Chai = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl border border-emerald-950 bg-[#0c1e13]/40 hover:border-emerald-900/60 transition-colors">
-              <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
-                <Sun className="h-6 w-6 text-emerald-400" />
+            {gardenPillars.map((pillar) => (
+              <div
+                key={pillar.title}
+                className="group relative aspect-[4/5] rounded-2xl border border-emerald-950 hover:border-emerald-900/60 transition-colors overflow-hidden"
+              >
+                <img
+                  src={pillar.img}
+                  alt={pillar.alt}
+                  loading="lazy"
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-cover select-none transition-transform duration-700 group-hover:scale-105"
+                />
+                {/* Scrim: opaque under the copy, clearing toward the top so the
+                    photograph still reads. */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/10" />
+                <div className="absolute inset-x-0 bottom-0 p-7">
+                  <h3 className="text-lg font-medium text-emerald-100 mb-2 drop-shadow">{pillar.title}</h3>
+                  <p className="text-sm text-emerald-100/75 leading-relaxed drop-shadow">{pillar.body}</p>
+                </div>
               </div>
-              <h3 className="text-lg font-medium text-emerald-200 mb-3">High Altitude Estates</h3>
-              <p className="text-sm text-emerald-200/50 leading-relaxed">
-                Plucked from premium heritage estates in Darjeeling and the foothills of Dooars, where cool mountain air naturally slows leaf growth to concentrate flavor.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-2xl border border-emerald-950 bg-[#0c1e13]/40 hover:border-emerald-900/60 transition-colors">
-              <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
-                <Award className="h-6 w-6 text-emerald-400" />
-              </div>
-              <h3 className="text-lg font-medium text-emerald-200 mb-3">Orthodox Processing</h3>
-              <p className="text-sm text-emerald-200/50 leading-relaxed">
-                Our premium Darjeeling selection is rolled and processed using orthodox methods, keeping the whole leaf intact to deliver the ultimate aromatic tea experience.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-2xl border border-emerald-950 bg-[#0c1e13]/40 hover:border-emerald-900/60 transition-colors">
-              <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
-                <ShieldCheck className="h-6 w-6 text-emerald-400" />
-              </div>
-              <h3 className="text-lg font-medium text-emerald-200 mb-3">Chemical Free</h3>
-              <p className="text-sm text-emerald-200/50 leading-relaxed">
-                Absolutely no synthetic flavors, dust fillers, or color coatings. Just pure, clean tea leaves processed to the highest safety and nutritional standards.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>

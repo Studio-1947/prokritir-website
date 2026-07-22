@@ -37,15 +37,12 @@ const Success = () => {
       {/* Top bar */}
       <div className="relative z-10 mx-auto max-w-[1400px] px-6 md:px-12 py-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group" data-testid="success-home-link">
-          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#00E5FF]/30 to-[#135033]/40 border border-white/15 flex items-center justify-center">
-            <img
-              src={LOGO_IMG}
-              alt=""
-              aria-hidden
-              draggable={false}
-              className="h-5 w-auto select-none"
-            />
-          </div>
+          <img
+            src={LOGO_IMG}
+            alt={BRAND.name}
+            draggable={false}
+            className="h-9 w-auto object-contain select-none transition-transform group-hover:scale-105"
+          />
           <div className="leading-none">
             <div className="font-display text-[19px]">{BRAND.name}</div>
             <div className="font-bn text-[12px] text-white/55 mt-0.5">{BRAND.bengali}</div>

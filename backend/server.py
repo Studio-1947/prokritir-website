@@ -14,10 +14,12 @@ from datetime import datetime, timezone
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# MongoDB connection (with fallback)
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+db_name = os.environ.get('DB_NAME', 'prokritir')
+client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=2000)
+db = client[db_name]
+IN_MEMORY_ORDERS = {}
 
 app = FastAPI(title="Prokritir Jol API")
 api_router = APIRouter(prefix="/api")
@@ -159,13 +161,22 @@ async def create_order(payload: OrderCreate):
     )
 
     doc = order.model_dump()
-    await db.orders.insert_one(doc)
+    IN_MEMORY_ORDERS[order_id] = doc
+    try:
+        await db.orders.insert_one(doc)
+    except Exception as e:
+        logger.warning(f"MongoDB save skipped or failed, using in-memory store: {e}")
     return order
 
 
 @api_router.get("/orders/{order_id}", response_model=Order)
 async def get_order(order_id: str):
-    doc = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    doc = IN_MEMORY_ORDERS.get(order_id)
+    if not doc:
+        try:
+            doc = await db.orders.find_one({"id": order_id}, {"_id": 0})
+        except Exception as e:
+            logger.warning(f"MongoDB query failed: {e}")
     if not doc:
         raise HTTPException(status_code=404, detail="Order not found")
     return Order(**doc)

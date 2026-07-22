@@ -29,7 +29,7 @@ const BackgroundStage = ({ progress }) => {
 
       {/* Source — lush village + tubewell overlay */}
       <motion.div style={{ opacity: sourceOpacity }} className="absolute inset-0">
-        <motion.div style={{ y: villageY }} className="absolute -inset-y-[6%] inset-x-0">
+        <motion.div style={{ y: villageY, willChange: "transform" }} className="absolute -inset-y-[6%] inset-x-0">
           <img
             src={IMAGES.village}
             alt="Lush green rural Bengal village"
@@ -51,7 +51,7 @@ const BackgroundStage = ({ progress }) => {
 
       {/* Purity — water splash macro */}
       <motion.div style={{ opacity: purityOpacity }} className="absolute inset-0">
-        <motion.div style={{ y: purityY }} className="absolute -inset-y-[6%] inset-x-0">
+        <motion.div style={{ y: purityY, willChange: "transform" }} className="absolute -inset-y-[6%] inset-x-0">
           <img
             src={IMAGES.purity}
             alt="Water droplet macro representing RO purity"
@@ -63,7 +63,7 @@ const BackgroundStage = ({ progress }) => {
 
       {/* Reveal / Drinking — twin portrait split */}
       <motion.div style={{ opacity: revealOpacity }} className="absolute inset-0">
-        <motion.div style={{ y: revealY }} className="absolute inset-0 grid grid-cols-2">
+        <motion.div style={{ y: revealY, willChange: "transform" }} className="absolute inset-0 grid grid-cols-2">
           <img
             src={IMAGES.bengaliYouth}
             alt="Young Bengali man drinking water"
