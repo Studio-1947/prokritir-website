@@ -85,9 +85,10 @@ body {
 }
 .pj-float { animation: pj-float 6s ease-in-out infinite; }
 
-/* Bottle glow */
+/* Bottle glow - optimized to prevent heavy repaints during scroll transformations */
 .bottle-glow {
-    filter: drop-shadow(0 30px 60px rgba(0, 229, 255, 0.12)) drop-shadow(0 60px 120px rgba(19, 80, 51, 0.35));
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
+    will-change: transform;
 }
 
 /* Water droplet */

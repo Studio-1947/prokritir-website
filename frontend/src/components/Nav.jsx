@@ -70,23 +70,12 @@ const Nav = ({ progress }) => {
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-12 py-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group" data-testid="brand-link">
-          <div className="relative">
-            <div className={`h-9 w-9 rounded-full bg-gradient-to-br border backdrop-blur-md flex items-center justify-center transition-colors ${
-              category === "masala"
-                ? "from-amber-400/30 via-transparent to-[#5b3a12]/40 border-amber-300/25"
-                : category === "chai"
-                  ? "from-emerald-400/30 via-transparent to-[#135033]/40 border-emerald-300/25"
-                  : "from-[#00E5FF]/30 via-transparent to-[#135033]/40 border-white/15"
-            }`}>
-              <img
-                src={LOGO_IMG}
-                alt=""
-                aria-hidden
-                draggable={false}
-                className="h-5 w-auto select-none"
-              />
-            </div>
-          </div>
+          <img
+            src={LOGO_IMG}
+            alt={BRAND.name}
+            draggable={false}
+            className="h-9 w-auto object-contain select-none transition-transform group-hover:scale-105"
+          />
           <div className="leading-none">
             <div className="font-display text-[19px] tracking-tight text-white">
               {category === "masala" ? "Prokritir Masala" : category === "chai" ? "Prokritir Chai" : BRAND.name}

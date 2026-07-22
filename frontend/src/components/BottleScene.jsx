@@ -94,6 +94,7 @@ const BottleScene = ({ progress }) => {
           rotate: bottleRotate,
           opacity: bottleOpacity,
           transformStyle: "preserve-3d",
+          willChange: "transform, opacity",
         }}
         className="relative bottle-glow"
       >
@@ -102,6 +103,10 @@ const BottleScene = ({ progress }) => {
           src={BOTTLE_BODY_IMG}
           alt="Prokritir Jol water bottle"
           draggable={false}
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+          }}
           className="absolute inset-0 h-full w-full object-contain select-none"
         />
 
@@ -120,6 +125,9 @@ const BottleScene = ({ progress }) => {
             rotate: capRotate,
             opacity: capOpacity,
             transformOrigin: "50% 100%",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            willChange: "transform, opacity",
           }}
           className="absolute h-auto select-none"
         />

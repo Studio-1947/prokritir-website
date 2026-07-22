@@ -27,7 +27,7 @@ export const PRODUCT_IMAGES = {
 
   // Tea
   "PC-CTC-250": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=compress&cs=tinysrgb&w=500&q=80",
-  "PC-ORTH-250": "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=compress&cs=tinysrgb&w=500&q=80",
+  "PC-ORTH-250": "https://images.unsplash.com/photo-1562547256-2c5ee93b60b7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHRlYXxlbnwwfHwwfHx8MA%3D%3D",
   "PC-MASALA-250": "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?auto=compress&cs=tinysrgb&w=500&q=80",
 };
 

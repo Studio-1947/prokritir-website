@@ -22,8 +22,8 @@ const processPillars = [
   },
   {
     title: "No Contaminants",
-    img: "https://imgs.search.brave.com/DPV23vA5P-NZrk1M5OpNyPchSWrf2FsjSKZQT9jZlbw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdw/cm94eS5kaXZlY2Ru/LmNvbS9ZZnhuQ2pi/aHYxTkJFTVJtY3VL/ZVNGc3RLX0tqclNn/a0duX3gyTllES084/L2c6Y2UvcnM6Zmls/bDoxMjAwOjY3NTox/L1ozTTZMeTlrYVha/bGMybDBaUzF6ZEc5/eVlXZGxMMlJwZG1W/cGJXRm5aUzlIWlhS/MGVVbHRZV2RsY3kw/eE5EUXdPVGM1Tnpj/MUxtcHdadz09Lndl/YnA",
-    alt: "A hand pointing at a product label listing what it does not contain",
+    img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&auto=format&fit=crop&q=60",
+    alt: "Earthy whole and ground spices arranged in traditional bowls",
     body: "We run batch-wise quality tests. Our spices have absolutely zero artificial colors, synthetic fragrances, potato starch, or chemical preservatives.",
   },
 ];

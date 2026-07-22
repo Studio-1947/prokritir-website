@@ -247,7 +247,7 @@ const OrderModal = () => {
                       <input
                         value={customer.phone}
                         onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
-                        placeholder="+91 90000 00000"
+                        placeholder="+91 98300 98300"
                         className={inputCls}
                         data-testid="input-phone"
                       />

@@ -128,6 +128,9 @@ const StoryOverlay = ({ progress }) => {
           <h3 className="font-display text-3xl md:text-5xl italic text-cyan-100">
             The first breath of air.
           </h3>
+          <p className="mt-4 text-white/70 text-[14px] leading-relaxed max-w-sm mx-auto">
+            The tamper ring breaks. Water preserved hundreds of feet below the earth meets the air for the very first time, pristine and untouched.
+          </p>
         </div>
       </motion.div>
 
