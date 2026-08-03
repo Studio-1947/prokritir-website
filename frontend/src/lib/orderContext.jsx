@@ -5,7 +5,7 @@ const OrderContext = createContext(null);
 export const OrderProvider = ({ children }) => {
   const [isOpen, setOpen] = useState(false);
   const [presetSku, setPresetSku] = useState(null);
-  const [category, setCategory] = useState("water"); // "water" | "masala" | "chai"
+  const [category, setCategory] = useState("water");
 
   const open = useCallback((sku = null, cat = "water") => {
     setPresetSku(sku);

@@ -4,7 +4,7 @@ import { X, Plus, Minus, Loader2, MapPin, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "@/lib/orderContext";
 import { listProducts, createOrder } from "@/lib/api";
-import { BOTTLE_IMG, PRODUCT_IMAGES, CATEGORY_FALLBACK_IMAGE } from "@/lib/brand";
+import { BOTTLE_IMG } from "@/lib/brand";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -23,13 +23,7 @@ const OrderModal = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  const getProductImage = (p) => {
-    if (p.sku.startsWith("PJ-")) return BOTTLE_IMG;
-    if (PRODUCT_IMAGES[p.sku]) return PRODUCT_IMAGES[p.sku];
-    if (p.sku.startsWith("PM-")) return CATEGORY_FALLBACK_IMAGE.masala;
-    if (p.sku.startsWith("PC-")) return CATEGORY_FALLBACK_IMAGE.chai;
-    return BOTTLE_IMG;
-  };
+  const getProductImage = () => BOTTLE_IMG;
 
   // Load products once
   useEffect(() => {
@@ -152,14 +146,9 @@ const OrderModal = () => {
                   <ShoppingBag className="h-4 w-4 text-cyan-200" />
                 </div>
                 <div>
-                  <div className="chapter-tag mb-1">
-                    Order · {category === "masala" ? "Prokritir Masala" : category === "chai" ? "Prokritir Chai" : "Prokritir Jol"}
-                  </div>
+                  <div className="chapter-tag mb-1">Order · Prokritir Jol</div>
                   <div className="font-display text-2xl md:text-3xl">
-                    {step === 1 
-                      ? (category === "masala" ? "Choose your spices" : category === "chai" ? "Choose your tea blend" : "Choose your bottles")
-                      : "Where should we send it?"
-                    }
+                    {step === 1 ? "Choose your bottles" : "Where should we send it?"}
                   </div>
                 </div>
               </div>
@@ -176,7 +165,7 @@ const OrderModal = () => {
                   {Object.entries(groups).map(([size, items]) => (
                     <div key={size}>
                       <div className="text-xs tracking-[0.25em] uppercase text-white/60 mb-3">
-                        {size} {category === "water" ? "bottles" : "pack"}
+                        {size} bottles
                       </div>
                       <div className="grid gap-3">
                         {items.map((p) => {
