@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useWaveNav, RISE, HOLD, FALL } from "@/lib/waveNav";
 
 /**
  * SectionTransition — a wall of powder that sweeps up from the bottom of the
@@ -17,38 +17,18 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
  * would drop frames on exactly the mid-range phones this is meant to delight.
  */
 
-// The rise needs real time. At 0.55s the easeOut front-loads so much travel
-// that the crown was at the top of the screen within 120ms and the whole thing
-// read as an instant flash rather than something thrown.
-const RISE = 0.75; // s, powder climbs and covers
-const HOLD = 0.12; // s, fully covered — the moment the swap reads as deliberate
-const FALL = 0.55; // s, powder retreats back down
-const TOTAL_MS = (RISE + HOLD + FALL) * 1000;
+// RISE / HOLD / FALL live in @/lib/waveNav — the gate needs them to time the
+// route swap to the covered moment, and they must not drift apart from what
+// this component actually animates.
 
 // Per-destination palette. `deep` is the settled powder at the base of the
 // curtain, `mid` the body of the cloud, `lift` the lit edge at its crown.
-// Kept close to each section's own page background and deliberately desaturated
-// — powder is dust, not paint. An earlier pass used full-strength amber and the
-// curtain read as a flat orange wipe rather than something airborne.
-// `tones` is what stops the curtain reading as one flat colour: real masala is
-// turmeric, chili and cumin thrown together, not a single brown. They are used
+// Kept close to the section's own page background and deliberately desaturated
+// — powder is dust, not paint.
+// `tones` is what stops the curtain reading as one flat colour: they are used
 // for the crown puffs and for the pockets of colour suspended in the body, so
 // the powder varies in hue across its width as well as up its height.
 const PALETTES = {
-  masala: {
-    deep: "#140b05",
-    mid: "#6b3208",
-    lift: "#b9700f",
-    spark: "#f0cd93",
-    tones: ["#b4470a", "#d29b0c", "#8f2708", "#7d4a09", "#c26a0d", "#5c1f06"],
-  },
-  chai: {
-    deep: "#07130c",
-    mid: "#0b4430",
-    lift: "#17805c",
-    spark: "#9fe3c4",
-    tones: ["#12684a", "#3f6d16", "#0a5340", "#1f7a4c", "#2d6b23", "#083a2a"],
-  },
   water: {
     deep: "#061021",
     mid: "#0a4459",
@@ -81,12 +61,6 @@ const POCKETS = [
   { x: 30, up: 84, size: 32, t: 3, o: 0.22 },
 ];
 
-const categoryFor = (pathname) => {
-  if (pathname === "/masala") return "masala";
-  if (pathname === "/chai") return "chai";
-  return "water";
-};
-
 // Puffs along the crown of the curtain, so its top edge billows instead of
 // reading as a straight rectangle. x/size are in vw, y nudges each puff off
 // the crown line. Fixed values, not random — the curtain should look the same
@@ -96,22 +70,25 @@ const categoryFor = (pathname) => {
 // half its width ABOVE the cloud, blanketing the whole viewport before the body
 // had left the bottom of the screen. The curtain looked instant. These add
 // lumpiness to the silhouette; the body does the covering.
-// `t` indexes the palette's tones, so neighbouring puffs differ in hue and the
-// crown mottles instead of reading as one colour.
-const PUFFS = [
-  { x: 4, size: 26, y: 1, o: 0.9, t: 2 },
-  { x: 16, size: 34, y: -3, o: 1, t: 0 },
-  { x: 29, size: 22, y: 2, o: 0.8, t: 4 },
-  { x: 41, size: 38, y: -4, o: 1, t: 1 },
-  { x: 54, size: 24, y: 2, o: 0.85, t: 3 },
-  { x: 66, size: 32, y: -3, o: 1, t: 0 },
-  { x: 78, size: 22, y: 2, o: 0.8, t: 5 },
-  { x: 90, size: 30, y: -2, o: 0.95, t: 1 },
-  { x: 99, size: 24, y: 1, o: 0.85, t: 2 },
-  // Sparser, higher spray so the crown is not an even row of domes.
-  { x: 22, size: 12, y: -8, o: 0.5, t: 1 },
-  { x: 48, size: 10, y: -10, o: 0.45, t: 4 },
-  { x: 72, size: 13, y: -9, o: 0.5, t: 0 },
+// Wave crests, drawn open (no closing edge) in a 1200x200 box and stretched to
+// each layer's width. Two phases so the swells never line up: `a` leads with a
+// crest, `b` with a trough. `preserveAspectRatio="none"` lets them squash to
+// any viewport, and the fill variant closes the path down to the box floor so
+// it joins the body beneath seamlessly.
+const CURVES = {
+  a: "M0,120 C100,40 200,40 300,120 S500,200 600,120 S800,40 900,120 S1100,200 1200,120",
+  b: "M0,96 C150,168 250,168 400,96 S650,24 800,96 S1050,168 1200,96",
+};
+const fillPath = (curve) => `${curve} L1200,200 L0,200 Z`;
+
+// Three swells. Each is twice viewport width and slides horizontally while it
+// rises — that lateral roll is what separates a wave from a rising wall. They
+// travel different distances, and the back two in the opposite direction to
+// the front, so the crests churn against each other instead of moving as one
+// sheet. `lift` is how far past the top each layer settles.
+const WAVES = [
+  { key: "back", curve: "b", tone: 3, crest: 26, h: 134, xFrom: -6, xTo: -54, o: 0.5, lift: -7, times: [0, 0.54, 0.66, 1] },
+  { key: "mid", curve: "a", tone: 0, crest: 21, h: 126, xFrom: -52, xTo: -2, o: 0.68, lift: -4, times: [0, 0.5, 0.62, 1] },
 ];
 
 // Grains that outrun the cloud, thrown clear of its crown.
@@ -130,6 +107,39 @@ const GRAINS = [
 const NOISE =
   "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")";
 
+/**
+ * A wave crest that slides sideways while its parent layer rises. The svg is
+ * twice viewport width so it can travel without ever exposing an edge, and
+ * `preserveAspectRatio="none"` lets the curve stretch to whatever shape the
+ * viewport is. The lateral travel is the whole point: a crest that only goes
+ * up reads as a rising wall no matter how it is shaped.
+ */
+const RollingCrest = ({ curve, crest, xFrom, xTo, fill, foam }) => (
+  <motion.div
+    className="absolute left-0 top-0 w-[200vw] will-change-transform"
+    style={{ height: `${crest}vh` }}
+    initial={{ x: `${xFrom}vw` }}
+    animate={{
+      x: [`${xFrom}vw`, `${xTo}vw`],
+      transition: { duration: RISE + HOLD + FALL, ease: "easeInOut" },
+    }}
+  >
+    <svg
+      viewBox="0 0 1200 200"
+      preserveAspectRatio="none"
+      className="block h-full w-full"
+      aria-hidden
+    >
+      <path d={fillPath(curve)} fill={fill} />
+      {/* Foam rides the open curve only — stroking the filled path would draw
+          the closing edges as vertical lines down the sides of the screen. */}
+      {foam && (
+        <path d={curve} fill="none" stroke={foam} strokeWidth="5" opacity="0.4" />
+      )}
+    </svg>
+  </motion.div>
+);
+
 const Curtain = ({ palette }) => {
   // 100% = wholly below the fold, 0% = wholly covering. Keyframes run
   // up-hold-down in one pass so the curtain never stalls mid-screen.
@@ -147,103 +157,110 @@ const Curtain = ({ palette }) => {
 
   return (
     <>
-      {/* Trailing layer — a beat behind the front, giving the cloud depth. */}
-      <motion.div
-        className="absolute inset-x-0 bottom-0 h-[130vh] will-change-transform"
-        initial={{ y: "100%" }}
-        animate={{
-          y: ["100%", "-4%", "-4%", "100%"],
-          transition: {
-            duration: RISE + HOLD + FALL,
-            times: [0, 0.5, 0.62, 1],
-            ease: ["easeOut", "linear", "easeIn"],
-          },
-        }}
-        style={{
-          // Long, soft fade and low opacity. With a tight fade this layer's
-          // top edge cut a hard horizontal line across the curtain, since it is
-          // darker than the front layer's crown and lags behind it.
-          background: `linear-gradient(to top, ${palette.deep} 0%, ${palette.deep} 46%, ${palette.mid} 82%, ${palette.mid}00 100%)`,
-          opacity: 0.55,
-        }}
-      />
+      {/* Back swells — a beat behind the front, giving the water depth. */}
+      {WAVES.map((w) => (
+        <motion.div
+          key={w.key}
+          className="absolute inset-x-0 bottom-0 will-change-transform"
+          style={{ height: `${w.h}vh`, opacity: w.o }}
+          initial={{ y: "100%" }}
+          animate={{
+            y: ["100%", `${w.lift}%`, `${w.lift}%`, "100%"],
+            transition: {
+              duration: RISE + HOLD + FALL,
+              times: w.times,
+              ease: ["easeOut", "linear", "easeIn"],
+            },
+          }}
+        >
+          <RollingCrest
+            curve={CURVES[w.curve]}
+            crest={w.crest}
+            xFrom={w.xFrom}
+            xTo={w.xTo}
+            fill={palette.tones[w.tone]}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0"
+            style={{
+              top: `${w.crest - 0.5}vh`,
+              background: `linear-gradient(to top, ${palette.deep} 0%, ${palette.deep} 45%, ${palette.tones[w.tone]} 100%)`,
+            }}
+          />
+        </motion.div>
+      ))}
 
-      {/* Front layer: the body of the powder, plus its billowing crown. */}
+      {/* Front swell: the wave that actually covers, and its foam. */}
       <motion.div
-        className="absolute inset-x-0 bottom-0 h-[125vh] will-change-transform"
+        className="absolute inset-x-0 bottom-0 h-[122vh] will-change-transform"
         variants={sweep}
         initial="initial"
         animate="animate"
       >
-        {/* Body: opaque almost to the crown, with the fade confined to the top
-            sliver. A long fade made the whole curtain a translucent haze that
-            washed over the screen the instant it started moving, with no edge
-            you could read as a position. */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(to top, ${palette.deep} 0%, ${palette.deep} 34%, ${palette.mid} 90%, ${palette.mid}00 100%)`,
-          }}
+        <RollingCrest
+          curve={CURVES.b}
+          crest={17}
+          xFrom={-14}
+          xTo={-58}
+          fill={palette.mid}
+          foam={palette.spark}
         />
 
-        {/* Pockets of colour suspended in the body, so the wall is mottled
-            turmeric/chili/cumin rather than one vertical ramp. */}
-        {POCKETS.map((p, i) => (
+        {/* Everything below the waterline lives in here. `overflow-hidden` is
+            load-bearing: the colour pockets and the grain are painted across
+            the layer, and without clipping they show ABOVE the crest, hazing
+            the water line that the wave shape exists to draw. It starts a hair
+            under the crest box's floor so no hairline of page shows at the
+            join. */}
+        <div className="absolute inset-x-0 bottom-0 overflow-hidden" style={{ top: "16.5vh" }}>
           <div
-            key={`pocket-${i}`}
-            className="absolute rounded-full"
+            className="absolute inset-0"
             style={{
-              left: `${p.x}vw`,
-              bottom: `${p.up}vh`,
-              width: `${p.size}vw`,
-              height: `${p.size * 0.72}vw`,
-              transform: "translate(-50%, 50%)",
-              opacity: p.o,
-              background: `radial-gradient(ellipse at center, ${palette.tones[p.t]} 0%, ${palette.tones[p.t]}b3 40%, ${palette.tones[p.t]}00 72%)`,
+              background: `linear-gradient(to top, ${palette.deep} 0%, ${palette.deep} 34%, ${palette.mid} 100%)`,
             }}
           />
-        ))}
 
-        {/* Crown puffs, centred on the body's fade so they billow past it. */}
-        {PUFFS.map((p, i) => (
+          {/* Pockets of colour suspended in the water, so the body is mottled
+              turmeric/chili/cumin rather than one vertical ramp. */}
+          {POCKETS.map((p, i) => (
+            <div
+              key={`pocket-${i}`}
+              className="absolute rounded-full"
+              style={{
+                left: `${p.x}vw`,
+                bottom: `${p.up}vh`,
+                width: `${p.size}vw`,
+                height: `${p.size * 0.72}vw`,
+                transform: "translate(-50%, 50%)",
+                opacity: p.o,
+                background: `radial-gradient(ellipse at center, ${palette.tones[p.t]} 0%, ${palette.tones[p.t]}b3 40%, ${palette.tones[p.t]}00 72%)`,
+              }}
+            />
+          ))}
+
+          {/* Light pooling just under the surface. Centred well inside its box
+              and fully faded before the edges: anchored `at 50% 100%` it put
+              peak brightness exactly on the boundary, cutting a hard line. */}
           <div
-            key={i}
-            className="absolute rounded-full"
+            className="absolute inset-x-0 top-0 h-[46vh]"
             style={{
-              left: `${p.x}vw`,
-              top: `${p.y}vh`,
-              width: `${p.size}vw`,
-              height: `${p.size}vw`,
-              transform: "translate(-50%, -50%)",
-              opacity: p.o,
-              background: `radial-gradient(circle at center, ${palette.tones[p.t]} 0%, ${palette.tones[p.t]}d9 34%, ${palette.tones[p.t]}00 70%)`,
+              background: `radial-gradient(ellipse 65% 55% at 50% 40%, ${palette.lift}3d 0%, ${palette.lift}16 45%, ${palette.lift}00 72%)`,
             }}
           />
-        ))}
 
-        {/* Warmth high in the cloud, where light would pool. The gradient is
-            centred well inside its box and fully faded before the box's edges:
-            anchoring it `at 50% 100%` put peak brightness exactly on the
-            bottom boundary, which cut a hard line clean across the screen. */}
-        <div
-          className="absolute inset-x-0 top-[4vh] h-[52vh]"
-          style={{
-            background: `radial-gradient(ellipse 65% 55% at 50% 45%, ${palette.lift}38 0%, ${palette.lift}14 45%, ${palette.lift}00 72%)`,
-          }}
-        />
-
-        {/* Tooth, so the powder has grain instead of reading as a gradient.
-            Masked to fade out with the body: an unmasked full-height rectangle
-            of noise ends in a dead-straight line across the screen, which was
-            the seam visible partway up the curtain. */}
-        <div
-          className="absolute inset-0 opacity-[0.28] pointer-events-none"
-          style={{
-            backgroundImage: NOISE,
-            maskImage: "linear-gradient(to top, black 88%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to top, black 88%, transparent 100%)",
-          }}
-        />
+          {/* Tooth, so the water has grain instead of reading as a gradient.
+              Faded in over the first few vh: starting it flush with the top of
+              this container put a tonal step right along the waterline, which
+              undid the curve the crest above is drawing. */}
+          <div
+            className="absolute inset-0 opacity-[0.24] pointer-events-none"
+            style={{
+              backgroundImage: NOISE,
+              maskImage: "linear-gradient(to bottom, transparent 0%, black 9%)",
+              WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 9%)",
+            }}
+          />
+        </div>
       </motion.div>
 
       {/* Grains thrown ahead of the cloud. */}
@@ -276,52 +293,9 @@ const Curtain = ({ palette }) => {
 };
 
 const SectionTransition = () => {
-  const { pathname } = useLocation();
-  const reduced = useReducedMotion();
-
-  const [run, setRun] = useState(null); // { id, category } while playing
-  const prevPath = useRef(pathname);
-  const counter = useRef(0);
-  const timers = useRef([]);
-
-  useEffect(() => {
-    const from = prevPath.current;
-    prevPath.current = pathname;
-    if (from === pathname) return; // first paint, or a no-op navigation
-
-    // `behavior: "instant"` deliberately: `html` sets `scroll-behavior: smooth`,
-    // so a bare scrollTo(0, 0) would glide down six viewports of story instead
-    // of cutting. Nothing else resets scroll on navigation, so without this you
-    // arrive on Spices at whatever offset you left the water story at.
-    const jumpToTop = () => window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-
-    // Only between the three brand sections. The order-success route is a
-    // destination rather than a section, and a curtain there reads as an error.
-    const sections = ["/", "/water", "/masala", "/chai"];
-    const play =
-      !reduced &&
-      sections.includes(from) &&
-      sections.includes(pathname) &&
-      // "/" and "/water" are the same section, so that pairing is not a move.
-      categoryFor(from) !== categoryFor(pathname);
-
-    if (!play) {
-      jumpToTop();
-      return;
-    }
-
-    counter.current += 1;
-    setRun({ id: counter.current, category: categoryFor(pathname) });
-
-    timers.current.forEach(clearTimeout);
-    timers.current = [
-      // Reset scroll at the covered moment, so the jump happens behind powder.
-      setTimeout(jumpToTop, RISE * 1000),
-      setTimeout(() => setRun(null), TOTAL_MS + 60),
-    ];
-  }, [pathname, reduced]);
-
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  // All the sequencing — when to play, and when to actually swap the route —
+  // belongs to the gate in @/lib/waveNav. This component only draws.
+  const { run } = useWaveNav();
 
   return (
     <AnimatePresence>
