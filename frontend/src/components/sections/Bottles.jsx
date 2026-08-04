@@ -29,18 +29,18 @@ const Bottles = () => {
           </p>
         </Reveal>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
+        <div className="mx-auto mt-16 grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3">
           {BOTTLES.tiers.map((t, i) => (
             <Reveal key={t.sku} delay={i * 0.08}>
               <GlassPanel
                 radius={32}
                 overflowVisible
                 className={`glass-hover h-full ${
-                  t.featured ? "ring-1 ring-[#4fd1e3]/40 md:-mt-6" : ""
+                  t.featured ? "ring-1 ring-[#4fd1e3]/40 lg:-mt-6" : ""
                 }`}
                 data-testid={`tier-${t.sku}`}
               >
-              <div className={`relative flex h-full flex-col p-8 md:p-9 ${t.featured ? "md:pb-12" : ""}`}>
+              <div className={`relative flex h-full flex-col p-8 md:p-9 ${t.featured ? "lg:pb-12" : ""}`}>
                 {t.featured && (
                   <span className="btn-accent absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 text-[10px] uppercase tracking-[0.2em]">
                     {t.note}

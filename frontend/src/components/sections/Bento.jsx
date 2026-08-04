@@ -17,9 +17,9 @@ const Bento = () => (
         </h2>
       </Reveal>
 
-      <div className="grid auto-rows-[minmax(190px,auto)] grid-cols-1 gap-5 md:grid-cols-12">
+      <div className="grid auto-rows-[minmax(190px,auto)] grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12">
         {/* Tall photo */}
-        <Reveal className="md:col-span-5 md:row-span-2">
+        <Reveal className="md:col-span-2 lg:col-span-5 lg:row-span-2">
           <div className="group relative h-full overflow-hidden rounded-[28px] border border-white/10">
             <img
               src={IMAGES.village}
@@ -39,7 +39,7 @@ const Bento = () => (
         </Reveal>
 
         {/* Zero km */}
-        <Reveal delay={0.06} className="md:col-span-4">
+        <Reveal delay={0.06} className="lg:col-span-4">
           <GlassPanel radius={28} className="glass-hover h-full">
             <div className="flex h-full flex-col justify-between p-8">
               <div className="eyebrow">Distance from well to bottle</div>
@@ -55,7 +55,7 @@ const Bento = () => (
         </Reveal>
 
         {/* Macro droplet */}
-        <Reveal delay={0.12} className="md:col-span-3">
+        <Reveal delay={0.12} className="lg:col-span-3">
           <div className="group relative h-full overflow-hidden rounded-[28px] border border-white/10">
             <img
               src={IMAGES.droplet}
@@ -71,7 +71,7 @@ const Bento = () => (
         </Reveal>
 
         {/* Quote */}
-        <Reveal delay={0.18} className="md:col-span-4">
+        <Reveal delay={0.18} className="md:col-span-2 lg:col-span-4">
           <GlassPanel radius={28} className="glass-hover h-full">
             <div className="flex h-full flex-col justify-center p-8">
               <div className="font-display text-[26px] leading-[1.25]">
@@ -84,7 +84,7 @@ const Bento = () => (
         </Reveal>
 
         {/* Spec list */}
-        <Reveal delay={0.24} className="md:col-span-3">
+        <Reveal delay={0.24} className="md:col-span-2 lg:col-span-3">
           <GlassPanel radius={28} className="glass-hover h-full">
             <div className="flex h-full flex-col justify-between p-8">
               <div className="eyebrow">Every bottle</div>

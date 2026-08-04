@@ -22,7 +22,7 @@ const Voices = () => (
         <div className="rule w-full max-w-xs md:mb-4" />
       </Reveal>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {VOICES.map((v, i) => (
           <Reveal key={v.name} delay={i * 0.08}>
             <GlassPanel radius={28} className="glass-hover h-full">

@@ -186,7 +186,11 @@ const OrderModal = () => {
                           return (
                             <div
                               key={p.sku}
-                              className={`flex items-center gap-4 rounded-[20px] border p-4 transition-colors duration-300 ${
+                              // flex-wrap + a full-width stepper below `sm`:
+                              // on a 390px screen the thumb, name, price and
+                              // stepper cannot share one row, and the stepper
+                              // was being clipped off the right edge.
+                              className={`flex flex-wrap items-center gap-x-3 gap-y-3 rounded-[20px] border p-3 transition-colors duration-300 sm:flex-nowrap sm:gap-x-4 sm:p-4 ${
                                 qty > 0
                                   ? "border-[#4fd1e3]/45 bg-[#4fd1e3]/[0.08]"
                                   : "border-white/10 bg-white/[0.04]"
@@ -202,8 +206,8 @@ const OrderModal = () => {
                                   {p.name} · {p.size}
                                 </div>
                               </div>
-                              <div className="font-display mr-2 text-[22px] md:mr-4">{inr(p.price)}</div>
-                              <div className="flex items-center gap-2">
+                              <div className="font-display shrink-0 text-[22px]">{inr(p.price)}</div>
+                              <div className="flex w-full shrink-0 items-center justify-end gap-2 sm:w-auto sm:pl-2">
                                 <button
                                   onClick={() => setQty(p.sku, -1)}
                                   disabled={qty === 0}
@@ -337,7 +341,12 @@ const OrderModal = () => {
             {/* RIGHT — cart */}
             <div className="relative z-10 flex flex-shrink-0 flex-col border-t border-white/10 bg-white/[0.04] p-6 md:w-[360px] md:border-l md:border-t-0 md:p-8">
               <div className="eyebrow mb-5">Your order</div>
-              <div className="min-h-0 flex-1 space-y-3.5 overflow-y-auto pr-1" data-testid="cart-summary">
+              {/* Capped on phones: the cart sits under the product list there,
+                  and an unbounded list would push the products off-screen. */}
+              <div
+                className="min-h-0 max-h-[20vh] flex-1 space-y-3.5 overflow-y-auto pr-1 md:max-h-none"
+                data-testid="cart-summary"
+              >
                 {cartItems.length === 0 && (
                   <div className="text-[14px] italic text-[color:var(--paper-faint)]">
                     No bottles selected yet.

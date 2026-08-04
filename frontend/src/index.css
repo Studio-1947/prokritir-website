@@ -20,10 +20,13 @@
     --ink-800: #071620;
     --ink-700: #0b2130;
 
-    /* Type */
-    --paper: #f2f7fa;
-    --paper-dim: rgba(242, 247, 250, 0.66);
-    --paper-faint: rgba(242, 247, 250, 0.42);
+    /* Type — one white, stepped down by opacity rather than by hue.
+       These were a blue-tinted off-white (#f2f7fa) at low alpha, which
+       composites over the dark base to a flat grey (~#62686E) and reads as a
+       separate dead colour rather than as dimmed white. */
+    --paper: #ffffff;
+    --paper-dim: rgba(255, 255, 255, 0.72);
+    --paper-faint: rgba(255, 255, 255, 0.52);
 
     /* Accent */
     --aqua: #4fd1e3;
