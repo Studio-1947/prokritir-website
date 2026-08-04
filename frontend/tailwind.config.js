@@ -7,6 +7,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // So the `font-sans` utility resolves to the site face rather than
+        // the system stack.
+        sans: ['Google Sans Flex', 'Noto Sans Bengali', 'system-ui', 'sans-serif']
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
