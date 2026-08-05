@@ -2,7 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, ShoppingBag } from "lucide-react";
 import GlassPanel from "@/components/GlassPanel";
-import { BRAND, HERO, BOTTLE_IMG } from "@/lib/brand";
+import BottleModel from "@/components/BottleModel";
+import { BRAND, HERO } from "@/lib/brand";
 import { useOrder } from "@/lib/orderContext";
 
 /**
@@ -27,9 +28,10 @@ const Hero = () => {
       <div className="aurora aurora-mint drift absolute -right-40 bottom-[-120px] h-[520px] w-[520px]" aria-hidden />
 
       <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-10 pt-32 md:pt-40 pb-14">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Copy */}
-          <div className="lg:col-span-7">
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-6">
+          {/* Copy. Capped width so the bottle can sit close without the two
+              ever colliding. */}
+          <div className="relative z-10 lg:col-span-6">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -49,7 +51,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 26 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.95, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display mt-7 text-[clamp(2.8rem,6.2vw,5.1rem)]"
+              className="font-display mt-7 text-[clamp(2.6rem,5.4vw,4.4rem)]"
             >
               {HERO.titleLead}
               <br />
@@ -90,37 +92,28 @@ const Hero = () => {
             </motion.div>
           </div>
 
-          {/* Floating product card */}
+          {/* The bottle itself — no card. A glass box drawn around a 3D object
+              reads as a picture in a frame and kills the illusion that it is
+              sitting in the page. The card's content survives as the price
+              chip below it; the name already lives in the nav. */}
           <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.96 }}
+            initial={{ opacity: 0, y: 40, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 1.1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5 flex justify-center lg:justify-end"
+            transition={{ duration: 1.2, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="relative lg:col-span-6"
           >
-            <GlassPanel radius={34} className="edge-light w-full max-w-[380px]">
-            <div className="relative p-8 text-center">
-              <div className="aurora absolute inset-x-8 top-6 h-56 opacity-70" aria-hidden />
-              <img
-                src={BOTTLE_IMG}
-                alt={`${BRAND.name} 500 ml bottle`}
-                draggable={false}
-                className="float-slow relative mx-auto h-[300px] w-auto select-none object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
-              />
-              <div className="rule my-7" />
-              <div className="flex items-end justify-between text-left">
-                <div>
-                  <div className="font-display text-[26px] leading-none">{BRAND.name}</div>
-                  <div className="font-bn mt-1.5 text-[13px] text-[color:var(--paper-faint)]">
-                    {BRAND.bengali}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="eyebrow mb-1">From</div>
-                  <div className="font-display text-[30px] leading-none ink-accent">₹20</div>
-                </div>
+            <BottleModel className="h-[42vh] w-full sm:h-[50vh] lg:h-[58vh]" />
+
+            <div className="mt-2 flex justify-center lg:mt-4">
+              <div className="glass inline-flex items-center gap-4 rounded-full px-6 py-3">
+                <span className="eyebrow !text-[10px]">From</span>
+                <span className="font-display text-[26px] leading-none ink-accent">₹20</span>
+                <span className="h-4 w-px bg-white/15" />
+                <span className="font-bn text-[13px] text-[color:var(--paper-faint)]">
+                  {BRAND.bengali}
+                </span>
               </div>
             </div>
-            </GlassPanel>
           </motion.div>
         </div>
 

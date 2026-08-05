@@ -23,19 +23,26 @@ const GlassPanel = ({
   className = "",
   radius = 28,
   overflowVisible = false,
+  // Fill the parent's height instead of sizing to content. Needed for any
+  // panel in a grid row: GlassSurface writes its height as an *inline* style,
+  // which beats an `h-full` class, so cards would otherwise each stop at
+  // their own text length and leave a ragged row.
+  fill = false,
   as: Tag = "div",
   ...rest
 }) => (
   <GlassSurface
     width="100%"
-    height="auto"
+    height={fill ? "100%" : "auto"}
     borderRadius={radius}
     // Single displacement pass instead of three. The RGB fringing at the panel
     // edge is barely legible at these sizes and costs 3× the filter work on
     // every frame the backdrop moves — which, with a live background behind
     // ~27 panels, is every frame.
     chromatic={false}
-    className={`glass-panel ${overflowVisible ? "glass-panel--overflow" : ""} ${className}`}
+    className={`glass-panel ${fill ? "glass-panel--fill" : ""} ${
+      overflowVisible ? "glass-panel--overflow" : ""
+    } ${className}`}
     {...rest}
   >
     {children}

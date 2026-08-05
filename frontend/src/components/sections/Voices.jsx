@@ -25,7 +25,7 @@ const Voices = () => (
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {VOICES.map((v, i) => (
           <Reveal key={v.name} delay={i * 0.08}>
-            <GlassPanel radius={28} className="glass-hover h-full">
+            <GlassPanel fill radius={28} className="glass-hover h-full">
             <figure className="flex h-full flex-col p-8">
               <Quote className="h-7 w-7 text-[#4fd1e3]/60" />
               <blockquote className="mt-6 flex-1 text-[15.5px] leading-relaxed text-[color:var(--paper-dim)]">

@@ -26,7 +26,7 @@
        separate dead colour rather than as dimmed white. */
     --paper: #ffffff;
     --paper-dim: rgba(255, 255, 255, 0.72);
-    --paper-faint: rgba(255, 255, 255, 0.52);
+    --paper-faint: rgba(255, 255, 255, 0.72);
 
     /* Accent */
     --aqua: #4fd1e3;
@@ -163,6 +163,13 @@ body {
     height: auto;
     padding: 0;
 }
+/* Equal-height mode for panels sharing a grid row. Must come after the
+   .glass-panel rules above — same specificity, so order decides. */
+.glass-panel--fill,
+.glass-panel--fill > .glass-surface__content {
+    height: 100%;
+}
+
 /* For cards with something deliberately outside the box (badges, the
    floating bottle on the receipt) that `overflow: hidden` would crop. */
 .glass-panel--overflow {
@@ -244,6 +251,46 @@ body {
 }
 .aurora-mint {
     background: radial-gradient(circle at center, rgba(99, 230, 168, 0.26), rgba(99, 230, 168, 0.08) 42%, transparent 72%);
+}
+
+/* ── Product cutouts on glass ──
+   The pack shots are cutouts whose subject — shrink wrap and PET — is itself
+   semi-transparent. `drop-shadow()` builds its shadow from the alpha channel,
+   so a heavy one gets drawn straight *through* the plastic and pools inside
+   the silhouette rather than under it. Against the flat page that passes for
+   shading; on a glass panel, where the backdrop is already refracting, it
+   reads as a grey smear with a dark halo tracing the outline.
+
+   So the weight moves underneath the pack as a real contact shadow, which
+   cannot bleed through the subject, and the cutout itself keeps only a tight,
+   pale drop-shadow for edge definition. */
+.product-shot__contact {
+    position: absolute;
+    bottom: 1%;
+    left: 50%;
+    width: 74%;
+    height: 15%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center,
+        rgba(0, 0, 0, 0.5),
+        rgba(0, 0, 0, 0.24) 46%,
+        transparent 72%);
+    filter: blur(15px);
+    pointer-events: none;
+}
+/* The single bottle is a narrow subject — a pack-width ellipse under it would
+   float free of the object it belongs to. */
+.product-shot__contact--narrow { width: 40%; }
+
+.product-shot__img {
+    /* Colour first, shadow last: the drop-shadow is then generated from the
+       corrected image and is not itself pushed around by the contrast lift.
+       The lift is small on purpose — enough for the plastic to hold its own
+       against a lit panel, not enough to look retouched. */
+    filter:
+        contrast(1.06) saturate(1.08) brightness(1.04)
+        drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
 }
 
 /* Film grain over photography, so gradients never band */

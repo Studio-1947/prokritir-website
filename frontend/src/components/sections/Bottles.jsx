@@ -2,7 +2,7 @@ import React from "react";
 import { Check } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import GlassPanel from "@/components/GlassPanel";
-import { BOTTLES, BOTTLE_IMG } from "@/lib/brand";
+import { BOTTLES } from "@/lib/brand";
 import { useOrder } from "@/lib/orderContext";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
@@ -32,7 +32,7 @@ const Bottles = () => {
         <div className="mx-auto mt-16 grid max-w-md gap-6 lg:max-w-none lg:grid-cols-3">
           {BOTTLES.tiers.map((t, i) => (
             <Reveal key={t.sku} delay={i * 0.08}>
-              <GlassPanel
+              <GlassPanel fill
                 radius={32}
                 overflowVisible
                 className={`glass-hover h-full ${
@@ -47,16 +47,40 @@ const Bottles = () => {
                   </span>
                 )}
 
-                <div className="relative mx-auto h-[150px] w-full">
-                  {t.featured && (
-                    <div className="aurora absolute inset-x-6 inset-y-0 opacity-80" aria-hidden />
-                  )}
-                  <img
-                    src={BOTTLE_IMG}
-                    alt=""
+                {/* The packs are square shots and the single is a tall bottle,
+                    so the frame is fixed and object-contain does the fitting —
+                    each tier keeps its true proportions instead of one being
+                    stretched to match the other. */}
+                <div className="relative mx-auto flex h-[230px] w-full items-center justify-center sm:h-[270px]">
+                  {/* Every tier gets a bloom, not just the featured one: the
+                      plastic is transparent, so without something lit behind it
+                      the pack refracts empty panel and goes flat. The featured
+                      card just gets more of it. */}
+                  <div
+                    className={`aurora absolute inset-x-4 inset-y-0 ${
+                      t.featured ? "opacity-80" : "opacity-40"
+                    }`}
                     aria-hidden
+                  />
+                  {/* Contact shadow — see .product-shot__contact in index.css
+                      for why the weight sits here and not on the image. */}
+                  <div
+                    className={`product-shot__contact ${
+                      t.sku === "PJ-500-1" ? "product-shot__contact--narrow" : ""
+                    }`}
+                    aria-hidden
+                  />
+                  <img
+                    src={t.image}
+                    alt={`${t.name} — ${t.size}`}
                     draggable={false}
-                    className="relative mx-auto h-full w-auto select-none object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)]"
+                    // The single bottle is tall and the packs are square, so
+                    // scale each toward whichever edge it runs out of first —
+                    // the packs then use the card's full width instead of
+                    // being held back by a height meant for the bottle.
+                    className={`product-shot__img relative max-h-full max-w-full select-none object-contain ${
+                      t.sku === "PJ-500-1" ? "h-full w-auto" : "w-full"
+                    }`}
                   />
                 </div>
 

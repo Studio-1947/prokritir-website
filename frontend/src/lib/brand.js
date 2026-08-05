@@ -12,6 +12,9 @@
 // Local product art (in /public)
 export const BOTTLE_IMG = "/bottle.png";
 export const LOGO_IMG = "/logo.png";
+// Shrink-wrapped multipacks, shot on transparency.
+export const PACK_500_IMG = "/500mlpacks.webp";
+export const PACK_1L_IMG = "/1Lpacks.webp";
 
 // Unsplash / Pexels delivery. Width-capped and auto-formatted: without `w=`
 // Unsplash serves the 4000–6000px original, which is pure waste behind a scrim.
@@ -113,6 +116,7 @@ export const BOTTLES = {
       size: "500 ml",
       price: 20,
       note: "One bottle",
+      image: BOTTLE_IMG,
       perks: ["500 ml bottle", "Tamper-evident seal", "Ideal for a first taste"],
       featured: false,
     },
@@ -122,6 +126,7 @@ export const BOTTLES = {
       size: "500 ml × 12",
       price: 200,
       note: "Most ordered",
+      image: PACK_500_IMG,
       perks: ["12 × 500 ml", "Free delivery", "Saves ₹40 against singles"],
       featured: true,
     },
@@ -131,6 +136,7 @@ export const BOTTLES = {
       size: "1 L × 12",
       price: 400,
       note: "For the household",
+      image: PACK_1L_IMG,
       perks: ["12 × 1 litre", "Free delivery", "Best value per litre"],
       featured: false,
     },

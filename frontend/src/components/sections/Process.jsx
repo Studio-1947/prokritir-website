@@ -35,8 +35,7 @@ const Process = () => (
               delay={Math.min(i * 0.06, 0.4)}
               className={isLast ? "sm:col-span-2" : ""}
             >
-              <GlassPanel
-                radius={26}
+              <GlassPanel fill radius={26}
                 className={`glass-hover h-full ${isLast ? "ring-1 ring-[#63e6a8]/35" : ""}`}
               >
                 <div className="p-7">

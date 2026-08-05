@@ -40,7 +40,7 @@ const Bento = () => (
 
         {/* Zero km */}
         <Reveal delay={0.06} className="lg:col-span-4">
-          <GlassPanel radius={28} className="glass-hover h-full">
+          <GlassPanel fill radius={28} className="glass-hover h-full">
             <div className="flex h-full flex-col justify-between p-8">
               <div className="eyebrow">Distance from well to bottle</div>
               <div>
@@ -72,7 +72,7 @@ const Bento = () => (
 
         {/* Quote */}
         <Reveal delay={0.18} className="md:col-span-2 lg:col-span-4">
-          <GlassPanel radius={28} className="glass-hover h-full">
+          <GlassPanel fill radius={28} className="glass-hover h-full">
             <div className="flex h-full flex-col justify-center p-8">
               <div className="font-display text-[26px] leading-[1.25]">
                 “We are only <em className="italic ink-accent">borrowing</em> the water.
@@ -85,7 +85,7 @@ const Bento = () => (
 
         {/* Spec list */}
         <Reveal delay={0.24} className="md:col-span-2 lg:col-span-3">
-          <GlassPanel radius={28} className="glass-hover h-full">
+          <GlassPanel fill radius={28} className="glass-hover h-full">
             <div className="flex h-full flex-col justify-between p-8">
               <div className="eyebrow">Every bottle</div>
               <ul className="mt-6 space-y-3 text-[13.5px] text-[color:var(--paper-dim)]">
