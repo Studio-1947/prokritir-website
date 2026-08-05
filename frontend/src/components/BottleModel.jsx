@@ -24,20 +24,46 @@ import { BOTTLE_IMG } from "@/lib/brand";
 
 /**
  * Two models exist in /public and both are wired up — swapping is this one
- * line, since they share dimensions (0.212 m tall, origin at the base):
+ * line, since they share dimensions (0.212 m tall, origin at the base) and
+ * every mesh/material name the traverse below looks for:
  *
- *   prokritir_jol_500ml.glb  — lathe build. Label UVs are correct and the
- *                              artwork reads cleanly. No water volume.
- *   Untitled.glb             — Blender build. Better bottle form, real cap,
- *                              and a water mesh, but the label UVs are
- *                              stretched and the artwork smears (see notes
- *                              in the material block below).
+ *   Untitled.glb             — Blender build. Better bottle form, a real cap
+ *                              and a water mesh. Its label UVs used to be
+ *                              stretched, which is why this file sat unused;
+ *                              the re-export fixed them (uniform texel
+ *                              density, band aspect within 5% of the 1024×288
+ *                              artwork) so the print now reads at any angle.
+ *   prokritir_jol_500ml.glb  — lathe build. Also correct, and a third of the
+ *                              weight. The fallback if the Blender build
+ *                              proves too heavy on slow connections.
  *
- * Currently on the lathe build because a legible label matters more on a
- * product page than the improved silhouette.
+ * On the Blender build for the silhouette and the water. It costs 4.35 MB
+ * against the lathe build's 1.87 MB — unquantized, no Draco — which is the
+ * one thing to revisit if the hero starts loading slowly.
  */
-const MODEL = "/prokritir_jol_500ml.glb";
+const MODEL = "/Untitled.glb";
 const HALF_HEIGHT = 0.106; // half of the model's 0.212 m bounding box
+
+// Standing yaw that turns the printed front of the label toward the camera.
+//
+// The label sheet carries the artwork twice — one panel front, one back — and
+// where the wrap *starts* is an authoring choice each export made differently.
+// Untitled.glb begins its wrap a quarter turn round, so with no correction the
+// camera at rotation 0 looks straight at u=0.5: the seam between the two
+// panels, with the tail of one wordmark on the left and the head of the next
+// on the right. The lathe build happens to already sit front-on.
+//
+// Both figures are read off each file's own label UVs (u→yaw is exactly linear
+// in both, and the artwork centres measure to u=0.25/0.75), so this is a
+// measurement, not a nudge — but it is per-file, and a re-export that changes
+// where the seam falls will need it re-measured.
+const LABEL_FRONT_YAW = {
+  "/Untitled.glb": Math.PI / 2,
+  "/prokritir_jol_500ml.glb": 0,
+};
+// Applied to the inner group, below the one the pointer drives, so the
+// animation keeps working in "0 = facing the viewer" terms.
+const FRONT_YAW = LABEL_FRONT_YAW[MODEL] ?? 0;
 
 // The Blender export ships a 3×3 m ground plane with the bottle — fourteen
 // times its width. Useful for rendering in Blender, but here it would fill
@@ -48,6 +74,16 @@ const HIDDEN_MESHES = new Set(["Plane", "Floor"]);
 // The transparent shell, under both models' naming. Hidden from the loaded
 // scene and drawn separately with a transmission material that works.
 const GLASS_MESHES = new Set(["glass", "glass_water", "Bottle_PET", "PET_clear"]);
+
+// The cap, under both models' naming — retinted below.
+const CAP_MATERIALS = new Set(["Cap_navy", "cap_navy"]);
+// Authored at baseColorFactor [0, 0.006, 0.018]. Those are *linear* values, so
+// it lands around #001224 — all but black, and against a near-black page the
+// cap stops reading as an object and turns into a hole at the top of the
+// bottle. This is the same navy a stop lighter, and three converts the sRGB
+// hex to linear itself. Set here rather than in the GLB so a re-export from
+// Blender can't silently revert it.
+const CAP_COLOR = "#17466d";
 
 useGLTF.preload(MODEL);
 
@@ -93,6 +129,19 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
       // refraction pass and does not depend on it.
       if (GLASS_MESHES.has(name) || GLASS_MESHES.has(mat?.name)) {
         o.visible = false;
+      }
+
+      // The cap is the only opaque thing on the model, so it is what gives the
+      // eye a hard edge to read the glass against. It needs to be lighter than
+      // the page, not the same value as it.
+      if (CAP_MATERIALS.has(mat?.name)) {
+        mat.color?.set(CAP_COLOR);
+        // A touch glossier than the authored 0.38: the environment rig is a
+        // dark field with a few narrow strips, so a matte cap catches almost
+        // nothing off it and the extra lightness alone would read as flat
+        // paint rather than a moulded closure.
+        mat.roughness = 0.3;
+        mat.needsUpdate = true;
       }
 
       // Deep and quite see-through, not a pale opaque fill: at high opacity a
@@ -148,7 +197,7 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
 
   return (
     <group ref={ref}>
-      <group position={[0, -HALF_HEIGHT, 0]}>
+      <group position={[0, -HALF_HEIGHT, 0]} rotation={[0, FRONT_YAW, 0]}>
         <primitive object={scene} />
         {glassGeometry && (
           <mesh geometry={glassGeometry}>
