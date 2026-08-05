@@ -39,9 +39,7 @@ const Footer = () => (
         {/* Brand */}
         <div>
           <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.06]">
-              <img src={LOGO_IMG} alt="" aria-hidden draggable={false} className="h-6 w-auto object-contain" />
-            </span>
+            <img src={LOGO_IMG} alt="" aria-hidden draggable={false} className="h-8 w-auto object-contain" />
             <span className="leading-none">
               <span className="font-display block text-[24px]">{BRAND.name}</span>
               <span className="font-bn mt-1.5 block text-[12px] text-[color:var(--paper-faint)]">
