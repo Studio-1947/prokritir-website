@@ -4,6 +4,7 @@ import { X, Plus, Minus, Loader2, MapPin, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "@/lib/orderContext";
 import { listProducts, createOrder } from "@/lib/api";
+import GlassPanel from "@/components/GlassPanel";
 import { BOTTLE_IMG } from "@/lib/brand";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
@@ -22,8 +23,6 @@ const OrderModal = () => {
   const [customer, setCustomer] = useState(emptyCustomer);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-
-  const getProductImage = () => BOTTLE_IMG;
 
   // Load products once
   useEffect(() => {
@@ -44,6 +43,12 @@ const OrderModal = () => {
       }, 250);
     }
   }, [isOpen, presetSku]);
+
+  // Lock the page behind the modal — otherwise the story scrolls under it.
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
 
   const setQty = (sku, delta) => {
     setCart((prev) => {
@@ -98,11 +103,12 @@ const OrderModal = () => {
     }
   };
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => (p.category || "water") === category);
-  }, [products, category]);
+  const filteredProducts = useMemo(
+    () => products.filter((p) => (p.category || "water") === category),
+    [products, category]
+  );
 
-  // Group products by size for cleaner layout
+  // Group products by size for a cleaner list
   const groups = useMemo(() => {
     const g = {};
     filteredProducts.forEach((p) => { (g[p.size] = g[p.size] || []).push(p); });
@@ -113,7 +119,7 @@ const OrderModal = () => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-stretch md:items-center md:justify-center bg-black/80 backdrop-blur-md"
+          className="fixed inset-0 z-[100] flex items-stretch bg-[#020810]/80 backdrop-blur-md md:items-center md:justify-center md:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -121,85 +127,102 @@ const OrderModal = () => {
           data-testid="order-modal-backdrop"
         >
           <motion.div
-            className="relative w-full md:max-w-[1080px] md:my-8 bg-[#0A192F] text-white md:rounded-2xl shadow-2xl overflow-hidden border border-white/10 flex flex-col md:flex-row max-h-screen md:max-h-[92vh]"
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 40, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full md:max-w-[1040px]"
+            initial={{ y: 40, opacity: 0, scale: 0.98 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 40, opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
             data-testid="order-modal"
           >
-            {/* Close */}
+            {/* Frosted rather than clear: this is a form, and the fluid
+                background behind it would otherwise read through the fields. */}
+            <GlassPanel radius={32} backgroundOpacity={0.62} saturation={1.2}>
+            <div className="relative flex max-h-screen flex-col overflow-hidden md:max-h-[92vh] md:flex-row">
+            <div className="aurora absolute -left-32 -top-32 h-[420px] w-[420px] opacity-70" aria-hidden />
+
             <button
               onClick={close}
-              className="absolute top-4 right-4 z-20 h-9 w-9 rounded-full flex items-center justify-center border border-white/15 bg-black/40 backdrop-blur-md hover:bg-white/10"
+              className="btn-glass absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center"
               aria-label="Close"
               data-testid="order-modal-close"
             >
               <X className="h-4 w-4" />
             </button>
 
-            {/* LEFT — product picker OR details form */}
-            <div className="flex-1 p-6 md:p-10 overflow-y-auto">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#00E5FF]/25 to-[#135033]/40 border border-white/15 flex items-center justify-center">
-                  <ShoppingBag className="h-4 w-4 text-cyan-200" />
-                </div>
+            {/* LEFT — products / details */}
+            <div className="relative z-10 flex-1 overflow-y-auto p-6 md:p-10">
+              <div className="mb-7 flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.06]">
+                  <ShoppingBag className="h-4 w-4 text-[#4fd1e3]" />
+                </span>
                 <div>
-                  <div className="chapter-tag mb-1">Order · Prokritir Jol</div>
-                  <div className="font-display text-2xl md:text-3xl">
+                  <div className="eyebrow">Order · Prokritir Jol</div>
+                  <div className="font-display mt-1 text-[30px] leading-none md:text-[34px]">
                     {step === 1 ? "Choose your bottles" : "Where should we send it?"}
                   </div>
                 </div>
               </div>
 
-              {/* Step indicator */}
-              <div className="flex items-center gap-2 mb-6 text-[11px] tracking-[0.3em] uppercase text-white/50">
-                <span className={step === 1 ? "text-cyan-200" : ""} data-testid="step-1-label">01 · Products</span>
-                <span className="h-px w-6 bg-white/25" />
-                <span className={step === 2 ? "text-cyan-200" : ""} data-testid="step-2-label">02 · Delivery</span>
+              {/* Steps */}
+              <div className="mb-7 flex items-center gap-3 text-[11px] uppercase tracking-[0.24em]">
+                <span className={step === 1 ? "text-[#4fd1e3]" : "text-[color:var(--paper-faint)]"} data-testid="step-1-label">
+                  01 · Products
+                </span>
+                <span className="h-px w-8 bg-white/20" />
+                <span className={step === 2 ? "text-[#4fd1e3]" : "text-[color:var(--paper-faint)]"} data-testid="step-2-label">
+                  02 · Delivery
+                </span>
               </div>
 
               {step === 1 && (
                 <div className="space-y-8" data-testid="products-step">
                   {Object.entries(groups).map(([size, items]) => (
                     <div key={size}>
-                      <div className="text-xs tracking-[0.25em] uppercase text-white/60 mb-3">
-                        {size} bottles
-                      </div>
+                      <div className="eyebrow mb-4">{size} bottles</div>
                       <div className="grid gap-3">
                         {items.map((p) => {
-                           const qty = cart[p.sku] || 0;
-                           return (
-                             <div
-                               key={p.sku}
-                               className={`flex items-center gap-4 p-4 rounded-xl border ${qty > 0 ? "border-cyan-300/40 bg-cyan-300/5" : "border-white/10 bg-white/[0.02]"} transition-colors`}
-                               data-testid={`product-${p.sku}`}
-                             >
-                               <div className="h-14 w-14 rounded-md bg-black/40 border border-white/10 flex items-center justify-center overflow-hidden">
-                                 <img src={getProductImage(p)} alt="" className="h-full w-full object-cover" />
-                               </div>
-                               <div className="flex-1">
-                                 <div className="font-medium">{p.label}</div>
-                                 <div className="text-white/55 text-sm">
-                                   {p.name} · {p.size}
-                                 </div>
-                               </div>
-                               <div className="font-display text-lg text-white/95 mr-4">{inr(p.price)}</div>
-                               <div className="flex items-center gap-2">
+                          const qty = cart[p.sku] || 0;
+                          return (
+                            <div
+                              key={p.sku}
+                              // flex-wrap + a full-width stepper below `sm`:
+                              // on a 390px screen the thumb, name, price and
+                              // stepper cannot share one row, and the stepper
+                              // was being clipped off the right edge.
+                              className={`flex flex-wrap items-center gap-x-3 gap-y-3 rounded-[20px] border p-3 transition-colors duration-300 sm:flex-nowrap sm:gap-x-4 sm:p-4 ${
+                                qty > 0
+                                  ? "border-[#4fd1e3]/45 bg-[#4fd1e3]/[0.08]"
+                                  : "border-white/10 bg-white/[0.04]"
+                              }`}
+                              data-testid={`product-${p.sku}`}
+                            >
+                              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
+                                <img src={BOTTLE_IMG} alt="" className="h-11 w-auto object-contain" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-[15px] font-semibold">{p.label}</div>
+                                <div className="truncate text-[12.5px] text-[color:var(--paper-faint)]">
+                                  {p.name} · {p.size}
+                                </div>
+                              </div>
+                              <div className="font-display shrink-0 text-[22px]">{inr(p.price)}</div>
+                              <div className="flex w-full shrink-0 items-center justify-end gap-2 sm:w-auto sm:pl-2">
                                 <button
                                   onClick={() => setQty(p.sku, -1)}
                                   disabled={qty === 0}
-                                  className="h-8 w-8 rounded-full border border-white/15 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
+                                  className="btn-glass flex h-9 w-9 items-center justify-center disabled:opacity-30"
                                   data-testid={`decrement-${p.sku}`}
                                   aria-label="Decrease"
                                 >
                                   <Minus className="h-3.5 w-3.5" />
                                 </button>
-                                <div className="w-8 text-center font-medium tabular-nums" data-testid={`qty-${p.sku}`}>{qty}</div>
+                                <div className="w-7 text-center text-[15px] font-semibold tabular-nums" data-testid={`qty-${p.sku}`}>
+                                  {qty}
+                                </div>
                                 <button
                                   onClick={() => setQty(p.sku, +1)}
-                                  className="h-8 w-8 rounded-full border border-cyan-300/50 bg-cyan-300/10 text-cyan-100 hover:bg-cyan-300/20 flex items-center justify-center"
+                                  className="btn-accent flex h-9 w-9 items-center justify-center"
                                   data-testid={`increment-${p.sku}`}
                                   aria-label="Increase"
                                 >
@@ -213,7 +236,7 @@ const OrderModal = () => {
                     </div>
                   ))}
                   {!products.length && (
-                    <div className="flex items-center gap-2 text-white/60 text-sm">
+                    <div className="flex items-center gap-2 text-[14px] text-[color:var(--paper-faint)]">
                       <Loader2 className="h-4 w-4 animate-spin" /> Loading catalogue…
                     </div>
                   )}
@@ -222,8 +245,8 @@ const OrderModal = () => {
 
               {step === 2 && (
                 <div className="space-y-4" data-testid="details-step">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <Field label="Full name *" testId="input-name">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Field label="Full name *">
                       <input
                         value={customer.name}
                         onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
@@ -232,7 +255,7 @@ const OrderModal = () => {
                         data-testid="input-name"
                       />
                     </Field>
-                    <Field label="Phone *" testId="input-phone">
+                    <Field label="Phone *">
                       <input
                         value={customer.phone}
                         onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
@@ -241,7 +264,7 @@ const OrderModal = () => {
                         data-testid="input-phone"
                       />
                     </Field>
-                    <Field label="Email (optional)" testId="input-email">
+                    <Field label="Email (optional)">
                       <input
                         type="email"
                         value={customer.email}
@@ -251,7 +274,7 @@ const OrderModal = () => {
                         data-testid="input-email"
                       />
                     </Field>
-                    <Field label="Pincode *" testId="input-pincode">
+                    <Field label="Pincode *">
                       <input
                         value={customer.pincode}
                         onChange={(e) => setCustomer({ ...customer, pincode: e.target.value })}
@@ -261,7 +284,7 @@ const OrderModal = () => {
                       />
                     </Field>
                   </div>
-                  <Field label="Address *" testId="input-address">
+                  <Field label="Address *">
                     <input
                       value={customer.address_line}
                       onChange={(e) => setCustomer({ ...customer, address_line: e.target.value })}
@@ -270,8 +293,8 @@ const OrderModal = () => {
                       data-testid="input-address"
                     />
                   </Field>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <Field label="City *" testId="input-city">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Field label="City *">
                       <input
                         value={customer.city}
                         onChange={(e) => setCustomer({ ...customer, city: e.target.value })}
@@ -280,7 +303,7 @@ const OrderModal = () => {
                         data-testid="input-city"
                       />
                     </Field>
-                    <Field label="State *" testId="input-state">
+                    <Field label="State *">
                       <input
                         value={customer.state}
                         onChange={(e) => setCustomer({ ...customer, state: e.target.value })}
@@ -290,7 +313,7 @@ const OrderModal = () => {
                       />
                     </Field>
                   </div>
-                  <Field label="Delivery notes (optional)" testId="input-notes">
+                  <Field label="Delivery notes (optional)">
                     <textarea
                       value={customer.notes}
                       onChange={(e) => setCustomer({ ...customer, notes: e.target.value })}
@@ -301,13 +324,13 @@ const OrderModal = () => {
                     />
                   </Field>
 
-                  <div className="mt-2 flex items-start gap-2 text-[12px] text-white/55">
-                    <MapPin className="h-3.5 w-3.5 mt-0.5 text-cyan-200" />
-                    <span>Delivery available across West Bengal · Cash-on-delivery available. We&apos;ll call before dispatch.</span>
+                  <div className="mt-2 flex items-start gap-2.5 text-[12.5px] text-[color:var(--paper-faint)]">
+                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#4fd1e3]" />
+                    <span>Delivery across West Bengal · Cash on delivery available. We call before dispatch.</span>
                   </div>
 
                   {error && (
-                    <div className="mt-2 text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg p-3" data-testid="order-error">
+                    <div className="mt-2 rounded-2xl border border-red-400/30 bg-red-500/10 p-3 text-[13.5px] text-red-200" data-testid="order-error">
                       {error}
                     </div>
                   )}
@@ -315,46 +338,64 @@ const OrderModal = () => {
               )}
             </div>
 
-            {/* RIGHT — cart summary */}
-            <div className="md:w-[360px] flex-shrink-0 bg-[#061021] border-t md:border-t-0 md:border-l border-white/10 p-6 md:p-8 flex flex-col">
-              <div className="chapter-tag mb-4">Your order</div>
-              <div className="flex-1 overflow-y-auto pr-1 space-y-3" data-testid="cart-summary">
+            {/* RIGHT — cart */}
+            <div className="relative z-10 flex flex-shrink-0 flex-col border-t border-white/10 bg-white/[0.04] p-6 md:w-[360px] md:border-l md:border-t-0 md:p-8">
+              <div className="eyebrow mb-5">Your order</div>
+              {/* Capped on phones: the cart sits under the product list there,
+                  and an unbounded list would push the products off-screen. */}
+              <div
+                className="min-h-0 max-h-[20vh] flex-1 space-y-3.5 overflow-y-auto pr-1 md:max-h-none"
+                data-testid="cart-summary"
+              >
                 {cartItems.length === 0 && (
-                  <div className="text-white/50 text-sm italic">No bottles selected yet.</div>
+                  <div className="text-[14px] italic text-[color:var(--paper-faint)]">
+                    No bottles selected yet.
+                  </div>
                 )}
                 {cartItems.map((i) => (
-                  <div key={i.sku} className="flex justify-between gap-3 text-sm" data-testid={`cart-line-${i.sku}`}>
+                  <div key={i.sku} className="flex justify-between gap-3 text-[14px]" data-testid={`cart-line-${i.sku}`}>
                     <div className="min-w-0">
                       <div className="truncate">{i.label}</div>
-                      <div className="text-white/50 text-xs">{i.size}{i.pack > 1 ? ` · pack of ${i.pack}` : ""}  ·  ×{i.quantity}</div>
+                      <div className="text-[12px] text-[color:var(--paper-faint)]">
+                        {i.size}{i.pack > 1 ? ` · pack of ${i.pack}` : ""} · ×{i.quantity}
+                      </div>
                     </div>
-                    <div className="font-medium whitespace-nowrap">{inr(i.line_total)}</div>
+                    <div className="whitespace-nowrap font-semibold">{inr(i.line_total)}</div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 space-y-2 text-sm text-white/75">
-                <div className="flex justify-between"><span>Subtotal</span><span data-testid="summary-subtotal">{inr(subtotal)}</span></div>
+              <div className="mt-6 space-y-2.5 text-[14px] text-[color:var(--paper-dim)]">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span data-testid="summary-subtotal">{inr(subtotal)}</span>
+                </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span data-testid="summary-shipping">{shipping === 0 && subtotal > 0 ? "Free" : inr(shipping)}</span>
+                  <span data-testid="summary-shipping">
+                    {shipping === 0 && subtotal > 0 ? "Free" : inr(shipping)}
+                  </span>
                 </div>
                 {subtotal > 0 && subtotal < 300 && (
-                  <div className="text-[11px] text-cyan-200/70">Add {inr(300 - subtotal)} more for free shipping.</div>
+                  <div className="text-[12px] text-[#4fd1e3]">
+                    Add {inr(300 - subtotal)} more for free shipping.
+                  </div>
                 )}
-                <div className="h-px bg-white/10 my-2" />
-                <div className="flex justify-between text-white text-base">
-                  <span className="font-display">Total</span>
-                  <span className="font-display" data-testid="summary-total">{inr(total)}</span>
+                <div className="rule my-3" />
+                <div className="flex items-baseline justify-between">
+                  <span className="font-display text-[20px] text-[color:var(--paper)]">Total</span>
+                  <span className="font-display text-[26px] text-[color:var(--paper)]" data-testid="summary-total">
+                    {inr(total)}
+                  </span>
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-col gap-2">
+              <div className="mt-6 flex flex-col gap-2.5">
                 {step === 1 ? (
                   <button
                     onClick={() => setStep(2)}
                     disabled={!canContinue}
-                    className="w-full py-3 rounded-full bg-cyan-300 text-[#0A192F] font-medium text-[13px] tracking-[0.2em] uppercase hover:bg-cyan-200 transition-colors disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed"
+                    className="btn-accent w-full py-4 text-[12px] uppercase tracking-[0.18em] disabled:cursor-not-allowed disabled:opacity-35"
                     data-testid="continue-to-details"
                   >
                     Continue to delivery
@@ -364,26 +405,32 @@ const OrderModal = () => {
                     <button
                       onClick={handleSubmit}
                       disabled={!canSubmit || submitting}
-                      className="w-full py-3 rounded-full bg-cyan-300 text-[#0A192F] font-medium text-[13px] tracking-[0.2em] uppercase hover:bg-cyan-200 transition-colors disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="btn-accent flex w-full items-center justify-center gap-2 py-4 text-[12px] uppercase tracking-[0.18em] disabled:cursor-not-allowed disabled:opacity-35"
                       data-testid="place-order-btn"
                     >
-                      {submitting ? <><Loader2 className="h-4 w-4 animate-spin" /> Placing…</> : <>Place order · {inr(total)}</>}
+                      {submitting ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Placing…</>
+                      ) : (
+                        <>Place order · {inr(total)}</>
+                      )}
                     </button>
                     <button
                       onClick={() => setStep(1)}
                       disabled={submitting}
-                      className="w-full py-2 rounded-full border border-white/15 text-[12px] tracking-[0.25em] uppercase text-white/70 hover:bg-white/5 transition-colors disabled:opacity-40"
+                      className="btn-glass w-full py-3 text-[11px] uppercase tracking-[0.2em] disabled:opacity-40"
                       data-testid="back-to-products"
                     >
                       ← Back to bottles
                     </button>
                   </>
                 )}
-                <div className="text-[10px] tracking-[0.2em] uppercase text-white/40 text-center mt-2">
+                <div className="mt-1 text-center text-[10px] uppercase tracking-[0.2em] text-[color:var(--paper-faint)]">
                   Payment on delivery · No card charged today
                 </div>
               </div>
             </div>
+            </div>
+            </GlassPanel>
           </motion.div>
         </motion.div>
       )}
@@ -391,11 +438,12 @@ const OrderModal = () => {
   );
 };
 
-const inputCls = "w-full bg-white/[0.04] border border-white/10 focus:border-cyan-300/60 focus:outline-none rounded-lg px-3 py-2.5 text-white placeholder:text-white/30 text-[14px]";
+const inputCls =
+  "w-full rounded-2xl border border-white/12 bg-white/[0.05] px-4 py-3 text-[14px] text-[color:var(--paper)] placeholder:text-white/25 transition-colors focus:border-[#4fd1e3]/60 focus:bg-white/[0.08] focus:outline-none";
 
 const Field = ({ label, children }) => (
   <label className="block">
-    <span className="block text-[11px] tracking-[0.2em] uppercase text-white/55 mb-1.5">{label}</span>
+    <span className="eyebrow mb-2 block !text-[10px]">{label}</span>
     {children}
   </label>
 );

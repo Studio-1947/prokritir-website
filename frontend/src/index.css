@@ -1,29 +1,64 @@
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;1,400;1,500&family=Hind+Siliguri:wght@400;500;600&display=swap');
+/* Google Sans Flex is variable across weight 100–1000, which is what the
+   display sizes and the micro-labels both lean on. It carries no Bengali,
+   so Noto Sans Bengali still sets প্রকৃতির জল and the Bengali pull quotes. */
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..1000&family=Noto+Sans+Bengali:wght@400..700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────
+   PROKRITIR JOL — "Deep Water"
+   Cinematic dark base, full-bleed photography, glass panels.
+   Depth comes from layered light: photography behind, frosted
+   glass above, a single aqua→mint accent for anything live.
+   ───────────────────────────────────────────────────────────── */
+
 :root {
-    --pj-navy: #0A192F;
-    --pj-navy-deep: #061021;
-    --pj-emerald: #135033;
-    --pj-emerald-soft: #1F7A4C;
-    --pj-cyan: #00E5FF;
-    --pj-mist: #B8D8D8;
-    --pj-off: #F8F9FA;
-    --pj-cream: #F1EDE4;
+    /* Ink */
+    --ink-900: #040c13;
+    --ink-800: #071620;
+    --ink-700: #0b2130;
+
+    /* Type — one white, stepped down by opacity rather than by hue.
+       These were a blue-tinted off-white (#f2f7fa) at low alpha, which
+       composites over the dark base to a flat grey (~#62686E) and reads as a
+       separate dead colour rather than as dimmed white. */
+    --paper: #ffffff;
+    --paper-dim: rgba(255, 255, 255, 0.72);
+    --paper-faint: rgba(255, 255, 255, 0.72);
+
+    /* Accent */
+    --aqua: #4fd1e3;
+    --mint: #63e6a8;
+    --accent-grad: linear-gradient(135deg, #4fd1e3 0%, #63e6a8 100%);
+
+    /* Glass */
+    --glass-fill: rgba(255, 255, 255, 0.06);
+    --glass-fill-strong: rgba(255, 255, 255, 0.10);
+    --glass-edge: rgba(255, 255, 255, 0.14);
+    --glass-blur: blur(22px) saturate(150%);
+}
+
+* {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 html {
+    /* GlassSurface's stylesheet uses light-dark(); without a declared scheme
+       it resolves to the light branch and its inset highlights vanish on this
+       dark page. */
+    color-scheme: dark;
     scroll-behavior: smooth;
+    /* The fixed nav is ~92px; anchor targets stop below it. */
+    scroll-padding-top: 96px;
 }
 
 body {
     margin: 0;
-    background: var(--pj-navy-deep);
-    color: var(--pj-off);
-    font-family: 'Google Sans', 'Hind Siliguri', -apple-system, sans-serif;
+    background: var(--ink-900);
+    color: var(--paper);
+    font-family: 'Google Sans Flex', 'Noto Sans Bengali', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -31,155 +66,331 @@ body {
 }
 
 ::selection {
-    background: var(--pj-cyan);
-    color: var(--pj-navy);
+    background: var(--aqua);
+    color: var(--ink-900);
 }
 
+/* Scrollbar — thin, in-palette, unobtrusive */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--ink-900); }
+::-webkit-scrollbar-thumb {
+    background: rgba(79, 209, 227, 0.28);
+    border-radius: 999px;
+    border: 3px solid var(--ink-900);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(79, 209, 227, 0.5); }
+
+/* ── Typography ── */
 .font-display {
-    font-family: 'Google Sans', 'Hind Siliguri', sans-serif;
+    font-family: 'Google Sans Flex', 'Noto Sans Bengali', -apple-system, sans-serif;
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
 }
-
 .font-bn {
-    font-family: 'Hind Siliguri', 'Google Sans', sans-serif;
+    font-family: 'Noto Sans Bengali', 'Google Sans Flex', sans-serif;
     font-weight: 500;
 }
 
-.font-body {
-    font-family: 'Google Sans', 'Hind Siliguri', sans-serif;
-    font-weight: 400;
+/* Google Sans Flex ships no true italic, so `font-style: italic` can only
+   give a synthesised slant — which at display sizes reads as a mistake.
+   Accent words in headings take weight contrast instead: the lead line sits
+   at 500, the accent drops to 300 and keeps its gradient. Small body
+   italics (notes, quotes) are left alone. */
+.font-display em,
+.font-display .italic,
+.font-display i {
+    font-style: normal;
+    font-weight: 300;
 }
 
-/* Grain overlay */
-.grain::before {
+/* Small tracked label above headings */
+.eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+}
+
+/* Accent word inside a display heading */
+.ink-accent {
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ── Glass ── */
+.glass {
+    background: var(--glass-fill);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-edge);
+    box-shadow:
+        0 24px 70px -30px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.glass-strong {
+    background: var(--glass-fill-strong);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+        0 30px 80px -34px rgba(0, 0, 0, 0.92),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+/* Deep tint for form surfaces where legibility beats transparency */
+.glass-deep {
+    background: rgba(7, 22, 32, 0.72);
+    -webkit-backdrop-filter: blur(26px) saturate(150%);
+    backdrop-filter: blur(26px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.95);
+}
+
+/* ── GlassSurface adaptation ──
+   The component flex-centres and pads its children, which is right for a
+   button-sized surface and wrong for a content card. Inside .glass-panel the
+   content wrapper goes back to normal flow so each card keeps its own
+   padding and alignment. */
+.glass-panel {
+    display: block;
+    height: auto;
+}
+.glass-panel > .glass-surface__content {
+    display: block;
+    height: auto;
+    padding: 0;
+}
+/* Equal-height mode for panels sharing a grid row. Must come after the
+   .glass-panel rules above — same specificity, so order decides. */
+.glass-panel--fill,
+.glass-panel--fill > .glass-surface__content {
+    height: 100%;
+}
+
+/* For cards with something deliberately outside the box (badges, the
+   floating bottle on the receipt) that `overflow: hidden` would crop. */
+.glass-panel--overflow {
+    overflow: visible;
+}
+
+/* Interactive glass — lifts toward the light on hover */
+.glass-hover {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                background-color 0.4s ease,
+                border-color 0.4s ease,
+                box-shadow 0.5s ease;
+}
+.glass-hover:hover {
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(79, 209, 227, 0.42);
+    box-shadow:
+        0 40px 90px -32px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(79, 209, 227, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+/* A hairline that catches light along the top edge of a panel */
+.edge-light {
+    position: relative;
+}
+.edge-light::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    pointer-events: none;
+}
+
+/* ── Buttons ── */
+.btn-accent {
+    position: relative;
+    background: var(--accent-grad);
+    color: #052029;
+    font-weight: 700;
+    border-radius: 999px;
+    box-shadow: 0 12px 34px -12px rgba(79, 209, 227, 0.7);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, filter 0.35s ease;
+}
+.btn-accent:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.07);
+    box-shadow: 0 18px 44px -12px rgba(79, 209, 227, 0.85);
+}
+.btn-accent:active { transform: translateY(0); }
+
+.btn-glass {
+    background: rgba(255, 255, 255, 0.07);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    color: var(--paper);
+    font-weight: 600;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.35s ease, border-color 0.35s ease;
+}
+.btn-glass:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.36);
+}
+.btn-glass:active { transform: translateY(0); }
+
+/* ── Atmosphere ── */
+/* Soft colour blooms behind glass. Pure gradients: no filters, so they
+   cost nothing to composite. */
+.aurora {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle at center, rgba(79, 209, 227, 0.30), rgba(79, 209, 227, 0.10) 42%, transparent 72%);
+}
+.aurora-mint {
+    background: radial-gradient(circle at center, rgba(99, 230, 168, 0.26), rgba(99, 230, 168, 0.08) 42%, transparent 72%);
+}
+
+/* ── Product cutouts on glass ──
+   The pack shots are cutouts whose subject — shrink wrap and PET — is itself
+   semi-transparent. `drop-shadow()` builds its shadow from the alpha channel,
+   so a heavy one gets drawn straight *through* the plastic and pools inside
+   the silhouette rather than under it. Against the flat page that passes for
+   shading; on a glass panel, where the backdrop is already refracting, it
+   reads as a grey smear with a dark halo tracing the outline.
+
+   So the weight moves underneath the pack as a real contact shadow, which
+   cannot bleed through the subject, and the cutout itself keeps only a tight,
+   pale drop-shadow for edge definition. */
+.product-shot__contact {
+    position: absolute;
+    bottom: 1%;
+    left: 50%;
+    width: 74%;
+    height: 15%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center,
+        rgba(0, 0, 0, 0.5),
+        rgba(0, 0, 0, 0.24) 46%,
+        transparent 72%);
+    filter: blur(15px);
+    pointer-events: none;
+}
+/* The single bottle is a narrow subject — a pack-width ellipse under it would
+   float free of the object it belongs to. */
+.product-shot__contact--narrow { width: 40%; }
+
+.product-shot__img {
+    /* Colour first, shadow last: the drop-shadow is then generated from the
+       corrected image and is not itself pushed around by the contrast lift.
+       The lift is small on purpose — enough for the plastic to hold its own
+       against a lit panel, not enough to look retouched. */
+    filter:
+        contrast(1.06) saturate(1.08) brightness(1.04)
+        drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+}
+
+/* Film grain over photography, so gradients never band */
+.grain::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 1;
-    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    /* No mix-blend-mode: a blend mode makes the compositor read back
-       everything painted beneath this layer, and beneath it is the whole
-       cross-fading background stage — i.e. a full-viewport readback on every
-       scroll frame. Plain opacity composites for free. The noise is white on
-       transparent, so straight alpha lands very close to `overlay` over these
-       dark backgrounds; the value is lowered to match the previous weight. */
-    opacity: 0.22;
+    opacity: 0.16;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
-/* Custom cursor for interactive elements */
-.pj-cursor {
-    cursor: none;
+/* Hairline rule */
+.rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
 }
 
-/* Marquee text */
-@keyframes pj-marquee {
+/* ── Motion ── */
+@keyframes float-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+}
+.float-slow { animation: float-slow 9s ease-in-out infinite; }
+
+@keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33% { transform: translate3d(3%, -4%, 0) scale(1.06); }
+    66% { transform: translate3d(-3%, 3%, 0) scale(0.97); }
+}
+/* Deliberately static. These blooms sit *behind* the glass panels, so any
+   motion here is a second source of backdrop invalidation on top of the
+   fluid — paid for a slow drift nobody can see under a frosted panel. The
+   keyframes stay defined so re-enabling is a one-line change. */
+.drift { animation: none; }
+
+@keyframes marquee-x {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
 }
-
-.pj-marquee {
-    animation: pj-marquee 40s linear infinite;
+.marquee-track {
+    display: inline-flex;
+    animation: marquee-x 46s linear infinite;
 }
 
-/* Subtle floating for accents */
-@keyframes pj-float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-14px); }
-}
-.pj-float { animation: pj-float 6s ease-in-out infinite; }
-
-/* Bottle contact shadow.
-   This used to be `filter: drop-shadow(...)`, which is the single most
-   expensive thing you can put on a scroll-driven element: drop-shadow reads
-   the alpha of the entire subtree — here a 579x1850 bottle — blurs it, and
-   redoes that work every time the layer's raster scale changes. The wrapper
-   animates both scale and rotate continuously, so it was re-blurring the
-   bottle on every frame of the scroll.
-   The ::after below is a plain radial gradient: soft by construction, so it
-   needs no filter, and it rides along as part of the same composited layer. */
-.bottle-glow {
-    position: relative;
-    will-change: transform;
-}
-.bottle-glow::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -3%;
-    width: 62%;
-    height: 7%;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.22) 45%, transparent 72%);
-    pointer-events: none;
-    z-index: -1;
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
 }
 
-/* Water droplet */
-@keyframes drip {
-    0% { transform: translateY(-20px) scale(0.6); opacity: 0; }
-    20% { opacity: 1; }
-    100% { transform: translateY(80vh) scale(1); opacity: 0; }
+/* Slow ken-burns on section photography */
+@keyframes ken {
+    0%, 100% { transform: scale(1.04) translate3d(0, 0, 0); }
+    50% { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+.ken { animation: ken 34s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+    .float-slow, .drift, .marquee-track, .ken { animation: none !important; }
+    html { scroll-behavior: auto; }
 }
 
-.hairline {
-    background: linear-gradient(90deg, transparent, rgba(248, 249, 250, 0.4), transparent);
-    height: 1px;
-    width: 100%;
+/* Set by SiteBackground when ANIMATE_BACKGROUND is off. The aurora blooms sit
+   *behind* the glass panels, so they are part of the backdrop too — leaving
+   them drifting would keep re-triggering every GlassSurface filter and undo
+   most of the win from freezing the fluid. */
+.bg-static .drift,
+.bg-static .ken,
+.bg-static .float-slow {
+    animation: none !important;
 }
 
-/* Buttons */
-.btn-ghost-outline {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(248, 249, 250, 0.25);
-    background: rgba(255,255,255,0.02);
-    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
-}
-.btn-ghost-outline:hover {
-    background: rgba(0, 229, 255, 0.08);
-    border-color: rgba(0, 229, 255, 0.6);
-    color: var(--pj-cyan);
-}
-
-/* Chapter tag */
-.chapter-tag {
-    font-family: 'Google Sans', 'Hind Siliguri', sans-serif;
-    font-weight: 500;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    font-size: 11px;
-    color: rgba(248,249,250,0.55);
+/* ── Focus ── */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--aqua);
+    outline-offset: 3px;
+    border-radius: 8px;
 }
 
 @layer base {
     :root {
-        --background: 210 65% 6%;
-        --foreground: 0 0% 98%;
-        --card: 210 65% 8%;
-        --card-foreground: 0 0% 98%;
-        --popover: 210 65% 8%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 210 66% 11%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 149 61% 20%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 210 30% 15%;
-        --muted-foreground: 210 10% 65%;
-        --accent: 186 100% 50%;
-        --accent-foreground: 210 65% 6%;
-        --destructive: 0 84.2% 60.2%;
+        --background: 202 61% 5%;
+        --foreground: 200 33% 96%;
+        --card: 201 50% 8%;
+        --card-foreground: 200 33% 96%;
+        --popover: 201 50% 8%;
+        --popover-foreground: 200 33% 96%;
+        --primary: 187 72% 60%;
+        --primary-foreground: 202 61% 5%;
+        --secondary: 154 72% 65%;
+        --secondary-foreground: 202 61% 5%;
+        --muted: 201 30% 16%;
+        --muted-foreground: 200 15% 68%;
+        --accent: 187 72% 60%;
+        --accent-foreground: 202 61% 5%;
+        --destructive: 0 72% 58%;
         --destructive-foreground: 0 0% 98%;
-        --border: 210 30% 18%;
-        --input: 210 30% 18%;
-        --ring: 186 100% 50%;
-        --radius: 0.5rem;
+        --border: 200 20% 20%;
+        --input: 200 20% 20%;
+        --ring: 187 72% 60%;
+        --radius: 1rem;
     }
-}
-
-@layer base {
-    * { @apply border-border; }
-    body { @apply bg-background text-foreground; }
 }
