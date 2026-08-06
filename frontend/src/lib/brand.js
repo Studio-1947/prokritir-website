@@ -16,6 +16,17 @@ export const LOGO_IMG = "/logo.png";
 export const PACK_500_IMG = "/500mlpacks.webp";
 export const PACK_1L_IMG = "/1Lpacks.webp";
 
+export const getProductImage = (p) => {
+  if (p?.image) return p.image;
+  const sku = typeof p === "string" ? p : p?.sku;
+  if (!sku) return BOTTLE_IMG;
+  if (sku === "PJ-500-12" || sku === "PJ-500-24") return PACK_500_IMG;
+  if (sku === "PJ-1L-12" || sku === "PJ-1L-24") return PACK_1L_IMG;
+  if (sku.startsWith("PJ-500") && (sku.includes("12") || sku.includes("24"))) return PACK_500_IMG;
+  if (sku.startsWith("PJ-1L") && (sku.includes("12") || sku.includes("24"))) return PACK_1L_IMG;
+  return BOTTLE_IMG;
+};
+
 // Unsplash / Pexels delivery. Width-capped and auto-formatted: without `w=`
 // Unsplash serves the 4000–6000px original, which is pure waste behind a scrim.
 const un = (id, w = 1800) =>

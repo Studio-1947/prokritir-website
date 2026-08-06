@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Check, Loader2, ArrowLeft, Copy } from "lucide-react";
 import { getOrder } from "@/lib/api";
 import GlassPanel from "@/components/GlassPanel";
-import { BOTTLE_IMG, BRAND, LOGO_IMG } from "@/lib/brand";
+import { BRAND, LOGO_IMG } from "@/lib/brand";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -127,10 +127,6 @@ const Success = () => {
         >
           <GlassPanel radius={32} overflowVisible className="edge-light" data-testid="order-receipt">
           <div className="p-8 md:p-9">
-            <div className="pointer-events-none absolute -right-6 -top-12 hidden opacity-80 md:block">
-              <img src={BOTTLE_IMG} alt="" aria-hidden className="float-slow h-44 w-auto drop-shadow-[0_24px_50px_rgba(0,0,0,0.7)]" />
-            </div>
-
             <div className="eyebrow mb-6">Order summary</div>
             {order ? (
               <>
