@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useOrder } from "@/lib/orderContext";
 import { listProducts, createOrder } from "@/lib/api";
 import GlassPanel from "@/components/GlassPanel";
-import { BOTTLE_IMG } from "@/lib/brand";
+import { BOTTLE_IMG, getProductImage } from "@/lib/brand";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -198,7 +198,7 @@ const OrderModal = () => {
                               data-testid={`product-${p.sku}`}
                             >
                               <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
-                                <img src={BOTTLE_IMG} alt="" className="h-11 w-auto object-contain" />
+                                <img src={getProductImage(p)} alt="" className="h-11 w-auto object-contain" />
                               </div>
                               <div className="min-w-0 flex-1">
                                 <div className="text-[15px] font-semibold">{p.label}</div>
