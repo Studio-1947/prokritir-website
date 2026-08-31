@@ -22,7 +22,7 @@ const CtaBand = () => {
 
           <div className="relative z-10 flex flex-col items-start gap-10 px-8 py-16 md:px-16 md:py-24 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
-              <div className="eyebrow">Cash on delivery · West Bengal</div>
+              <div className="eyebrow">Order on WhatsApp · West Bengal</div>
               <h2 className="font-display mt-6 text-[clamp(2.2rem,4.6vw,3.6rem)]">
                 Taste the difference
                 <br />

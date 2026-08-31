@@ -32,21 +32,6 @@ const Hero = () => {
           {/* Copy. Capped width so the bottle can sit close without the two
               ever colliding. */}
           <div className="relative z-10 lg:col-span-6">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="glass inline-flex items-center gap-2.5 rounded-full px-4 py-2"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4fd1e3] opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4fd1e3]" />
-              </span>
-              <span className="eyebrow !tracking-[0.24em] text-[10px] text-[rgba(242,247,250,0.8)]">
-                {HERO.eyebrow}
-              </span>
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 26 }}
               animate={{ opacity: 1, y: 0 }}

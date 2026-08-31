@@ -1,31 +1,67 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, Loader2, ArrowLeft, Copy } from "lucide-react";
 import { getOrder } from "@/lib/api";
 import GlassPanel from "@/components/GlassPanel";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { BRAND, LOGO_IMG } from "@/lib/brand";
+import {
+  WHATSAPP_DISPLAY,
+  buildFollowUpMessage,
+  buildOrderMessage,
+  whatsappUrl,
+} from "@/lib/whatsapp";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
+// An id the API could have issued. A local fallback reference (PJ-260831-A3F2)
+// is not one, and asking the API for it only produces a spurious 404.
+const isApiOrderId = (v) => /^[0-9a-f-]{36}$/i.test(v || "");
+
 const Success = () => {
   const { orderId } = useParams();
-  const [order, setOrder] = useState(null);
+  const { state } = useLocation();
+
+  // The modal hands the order over directly, so the page is complete on
+  // arrival; the fetch is only for a reload or a shared link.
+  const [order, setOrder] = useState(state?.order || null);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
+  // False when the browser swallowed the tab we opened at checkout — then the
+  // headline has to ask for one more click rather than claim the order is sent.
+  const handedOff = state?.opened !== false;
+
   useEffect(() => {
-    getOrder(orderId).then(setOrder).catch(() => setError("Order not found."));
-  }, [orderId]);
+    if (order) return;
+    if (!isApiOrderId(orderId)) {
+      setError("We could not load this order. Your reference still works on WhatsApp.");
+      return;
+    }
+    getOrder(orderId)
+      .then(setOrder)
+      .catch(() => setError("Order not found. Your reference still works on WhatsApp."));
+  }, [orderId, order]);
+
+  const orderNumber = order?.order_number || (isApiOrderId(orderId) ? null : orderId);
 
   const copyNumber = async () => {
-    if (!order) return;
+    if (!orderNumber) return;
     try {
-      await navigator.clipboard.writeText(order.order_number);
+      await navigator.clipboard.writeText(orderNumber);
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch { /* ignore */ }
   };
+
+  // Before the handoff the chat needs the whole order; after it, the shop
+  // already has it and a bare reference is the useful thing to send.
+  const chatMessage = handedOff
+    ? buildFollowUpMessage(orderNumber)
+    : order
+    ? buildOrderMessage(order)
+    : buildFollowUpMessage(orderNumber);
 
   return (
     <div className="relative z-10 min-h-screen overflow-hidden grain">
@@ -54,7 +90,7 @@ const Success = () => {
       </div>
 
       <div className="relative z-10 mx-auto grid max-w-[1180px] gap-10 px-6 pb-24 pt-10 md:px-10 lg:grid-cols-[1.1fr_1fr]">
-        {/* LEFT — confirmation */}
+        {/* LEFT — the handoff */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -62,40 +98,76 @@ const Success = () => {
         >
           <div className="mb-7 flex items-center gap-3">
             <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#63e6a8]/40 bg-[#63e6a8]/10">
-              <Check className="h-5 w-5 text-[#63e6a8]" />
+              {handedOff ? (
+                <Check className="h-5 w-5 text-[#63e6a8]" />
+              ) : (
+                <WhatsAppIcon className="h-5 w-5 text-[#63e6a8]" />
+              )}
             </span>
-            <div className="eyebrow">Order confirmed</div>
+            <div className="eyebrow" data-testid="success-eyebrow">
+              {handedOff ? "Order sent to WhatsApp" : "One step left"}
+            </div>
           </div>
 
           <h1 className="font-display text-[clamp(2.3rem,4.8vw,3.6rem)]">
-            Thank you.
+            {handedOff ? "Thank you." : "Almost there."}
             <br />
-            <em className="italic ink-accent">The aquifer is on its way.</em>
+            <em className="italic ink-accent">
+              {handedOff ? "We'll reply on WhatsApp." : "Send it on WhatsApp."}
+            </em>
           </h1>
 
           <p className="mt-7 max-w-lg text-[15px] leading-relaxed text-[color:var(--paper-dim)]">
-            We have your order, and the team in {BRAND.origin} is packing it now. You will get
-            a call before dispatch — and every bottle in this order funds a litre of clean
-            water for a family in rural Bengal.
+            {handedOff ? (
+              <>
+                Your order is waiting in our WhatsApp chat. The team in {BRAND.origin} confirms
+                stock, sends the payment options, and posts dispatch and tracking in the same
+                thread — so the whole order lives in one conversation.
+              </>
+            ) : (
+              <>
+                Your browser blocked the WhatsApp tab, so the order has not reached us yet.
+                Tap below and it opens with everything already written out — nothing to retype.
+              </>
+            )}
           </p>
 
-          {order && (
-            <div className="glass mt-9 inline-flex items-center gap-3 rounded-full px-6 py-3.5">
-              <span className="eyebrow !text-[10px]">Order #</span>
-              <span className="font-mono text-[15px] text-[#4fd1e3]" data-testid="order-number">
-                {order.order_number}
-              </span>
-              <button
-                onClick={copyNumber}
-                className="text-[color:var(--paper-faint)] transition-colors hover:text-[#4fd1e3]"
-                aria-label="Copy order number"
-                data-testid="copy-order-number"
-              >
-                <Copy className="h-3.5 w-3.5" />
-              </button>
-              {copied && <span className="text-[11px] text-[#63e6a8]">Copied</span>}
-            </div>
-          )}
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            {/* A plain link, deliberately: this is the recovery path when a
+                popup blocker ate the tab, so it must not need window.open(). */}
+            <a
+              href={whatsappUrl(chatMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-accent inline-flex items-center gap-2.5 px-7 py-4 text-[12px] uppercase tracking-[0.18em]"
+              data-testid="open-whatsapp"
+            >
+              <WhatsAppIcon className="h-4 w-4" />
+              {handedOff ? "Open the chat" : "Send order on WhatsApp"}
+            </a>
+
+            {orderNumber && (
+              <div className="glass inline-flex items-center gap-3 rounded-full px-6 py-3.5">
+                <span className="eyebrow !text-[10px]">Order #</span>
+                <span className="font-mono text-[15px] text-[#4fd1e3]" data-testid="order-number">
+                  {orderNumber}
+                </span>
+                <button
+                  onClick={copyNumber}
+                  className="text-[color:var(--paper-faint)] transition-colors hover:text-[#4fd1e3]"
+                  aria-label="Copy order number"
+                  data-testid="copy-order-number"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                </button>
+                {copied && <span className="text-[11px] text-[#63e6a8]">Copied</span>}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 text-[12.5px] text-[color:var(--paper-faint)]" data-testid="whatsapp-number">
+            Chat with us on {WHATSAPP_DISPLAY}
+          </div>
 
           {!order && !error && (
             <div className="mt-9 inline-flex items-center gap-2 text-[14px] text-[color:var(--paper-faint)]">
@@ -103,10 +175,23 @@ const Success = () => {
             </div>
           )}
           {error && (
-            <div className="mt-9 max-w-md rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-[14px] text-red-200" data-testid="success-error">
+            <div className="mt-9 max-w-md rounded-2xl border border-white/12 bg-white/[0.05] p-4 text-[13.5px] text-[color:var(--paper-dim)]" data-testid="success-error">
               {error}
             </div>
           )}
+
+          {/* What happens next — the three stages, all in the one chat. */}
+          <div className="mt-11 max-w-lg space-y-3.5" data-testid="whatsapp-steps">
+            <NextStep n="01" title="Confirmation">
+              We check stock and confirm your delivery slot in the chat, usually within a few hours.
+            </NextStep>
+            <NextStep n="02" title="Payment">
+              Pay by UPI or a secure card link sent in the chat — or choose cash on delivery. Nothing is charged on this site.
+            </NextStep>
+            <NextStep n="03" title="Shipment">
+              We post the dispatch note and tracking to the same thread, and you can ask for an update any time by replying.
+            </NextStep>
+          </div>
 
           <div className="mt-11 grid max-w-lg grid-cols-3 gap-4">
             <Stat label="Ships in" value="24 hrs" />
@@ -114,7 +199,7 @@ const Success = () => {
               label="Litres given back"
               value={order ? `${order.items.reduce((s, i) => s + i.pack * i.quantity, 0)}` : "—"}
             />
-            <Stat label="Payment" value="On delivery" />
+            <Stat label="Payment" value="On WhatsApp" />
           </div>
         </motion.div>
 
@@ -158,6 +243,9 @@ const Success = () => {
                       {inr(order.total)}
                     </span>
                   </div>
+                  <div className="flex items-center gap-2 pt-1 text-[12.5px] text-[#63e6a8]">
+                    <WhatsAppIcon className="h-3.5 w-3.5" /> Payable on WhatsApp after confirmation
+                  </div>
                 </div>
 
                 <div className="rule mt-7" />
@@ -176,7 +264,9 @@ const Success = () => {
                 </div>
               </>
             ) : (
-              <div className="text-[14px] text-[color:var(--paper-faint)]">Fetching your receipt…</div>
+              <div className="text-[14px] text-[color:var(--paper-faint)]">
+                {error ? "Open the chat above and we'll pull your order up by its reference." : "Fetching your receipt…"}
+              </div>
             )}
           </div>
           </GlassPanel>
@@ -193,6 +283,16 @@ const Success = () => {
     </div>
   );
 };
+
+const NextStep = ({ n, title, children }) => (
+  <div className="flex gap-4 rounded-[20px] border border-white/10 bg-white/[0.04] p-4">
+    <span className="font-mono mt-0.5 text-[12px] text-[#63e6a8]">{n}</span>
+    <div>
+      <div className="text-[14px] font-semibold">{title}</div>
+      <div className="mt-1 text-[13px] leading-relaxed text-[color:var(--paper-dim)]">{children}</div>
+    </div>
+  </div>
+);
 
 const Stat = ({ label, value }) => (
   <GlassPanel radius={16}>

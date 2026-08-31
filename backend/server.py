@@ -91,6 +91,11 @@ class Order(BaseModel):
     customer: Customer
     status: str
     created_at: str
+    # Where the order is actually completed. The site only captures the basket;
+    # confirmation, payment and shipment updates all happen in the WhatsApp
+    # thread the customer is sent to, keyed by `order_number`.
+    # Defaulted so orders written before the WhatsApp handoff still load.
+    channel: str = "whatsapp"
 
 
 # ─────────────────────────────  ROUTES  ─────────────────────────────

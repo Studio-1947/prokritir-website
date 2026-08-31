@@ -119,7 +119,7 @@ export const BOTTLES = {
   eyebrow: "Bottles",
   title: "Choose your",
   titleAccent: "pour.",
-  body: "Cash on delivery across West Bengal. Free shipping over ₹300. Every order funds a litre of clean water for a family in rural Bengal.",
+  body: "Ordered on WhatsApp — we confirm, take payment and share tracking in one chat. Free shipping over ₹300. Every order funds a litre of clean water for a family in rural Bengal.",
   tiers: [
     {
       sku: "PJ-500-1",
@@ -203,8 +203,16 @@ export const FAQ = [
     a: "RO does remove nearly everything, so stage six meters calcium and magnesium back in and brings the water to about 7.2 pH. That is why it tastes like water rather than tasting like nothing at all.",
   },
   {
+    q: "How does ordering work?",
+    a: "Pick your bottles here and the site opens WhatsApp with the order already written out — items, total and delivery address. We confirm stock in that chat, send you the payment options, and post dispatch and tracking to the same thread. One conversation from order to doorstep, and nothing is charged on this website.",
+  },
+  {
+    q: "How do I pay?",
+    a: "In the WhatsApp chat, after we confirm your order: UPI, a secure card link, or cash on delivery — whichever you prefer. We never ask for card details on this site or over the phone.",
+  },
+  {
     q: "Which areas do you deliver to?",
-    a: "Across West Bengal, with cash on delivery available everywhere we ship. Orders over ₹300 ship free; below that a flat ₹40 applies. We call before dispatch.",
+    a: "Across West Bengal, with cash on delivery available everywhere we ship. Orders over ₹300 ship free; below that a flat ₹40 applies. We message before dispatch.",
   },
   {
     q: "What does 'one bottle, one litre' actually fund?",
