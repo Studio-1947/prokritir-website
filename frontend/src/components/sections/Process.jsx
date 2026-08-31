@@ -6,7 +6,7 @@ import { STAGES } from "@/lib/brand";
 /**
  * Seven Stages — glass cards frosting the ferrofluid behind them. The seventh
  * (Nirmalata) is the only human step, so it runs double-width with the accent
- * treatment and closes the grid rather than trailing off it.
+ * treatment and closes the grid rather than trailing off it.y
  */
 const Process = () => (
   <section id="purity" className="relative overflow-hidden py-24 md:py-32 grain">
