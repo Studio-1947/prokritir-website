@@ -1,6 +1,8 @@
 import React from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { BRAND, LOGO_IMG, FOOTER_LINKS } from "@/lib/brand";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
+import { WHATSAPP_DISPLAY, buildEnquiryMessage, whatsappUrl } from "@/lib/whatsapp";
 
 const SOCIALS = [
   {
@@ -91,6 +93,23 @@ const Footer = () => (
         <div>
           <div className="eyebrow">Contact</div>
           <ul className="mt-6 space-y-4 text-[14px] text-[color:var(--paper-dim)]">
+            {/* Orders and their payment and tracking all run through this
+                line, so it leads the list. */}
+            <li>
+              <a
+                href={whatsappUrl(buildEnquiryMessage())}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 transition-colors hover:text-[#63e6a8]"
+                data-testid="footer-whatsapp"
+              >
+                <WhatsAppIcon className="h-4 w-4 text-[#63e6a8]" />
+                {WHATSAPP_DISPLAY}
+                <span className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--paper-faint)]">
+                  Orders
+                </span>
+              </a>
+            </li>
             <li>
               <a href={`mailto:${BRAND.email}`} className="flex items-center gap-3 transition-colors hover:text-[#4fd1e3]">
                 <Mail className="h-4 w-4 text-[#4fd1e3]" />

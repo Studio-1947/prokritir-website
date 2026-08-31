@@ -42,7 +42,7 @@ const Process = () => (
                 <div className="flex items-start justify-between gap-4">
                   <span
                     className={`font-display text-[34px] leading-none ${
-                      isLast ? "ink-accent" : "text-white/25"
+                      isLast ? "ink-accent" : "text-white"
                     }`}
                   >
                     {s.n}

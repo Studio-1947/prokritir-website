@@ -1,16 +1,33 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, Loader2, MapPin, ShoppingBag } from "lucide-react";
+import { X, Plus, Minus, Loader2, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "@/lib/orderContext";
 import { listProducts, createOrder } from "@/lib/api";
 import GlassPanel from "@/components/GlassPanel";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { BOTTLE_IMG, getProductImage } from "@/lib/brand";
+import { buildOrderMessage, openWhatsApp, reserveWhatsAppTab } from "@/lib/whatsapp";
 
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
 const emptyCustomer = {
   name: "", phone: "", email: "", address_line: "", city: "", state: "West Bengal", pincode: "", notes: "",
+};
+
+// Mirrors the backend's PJ-YYMMDD-XXXX reference. Only used when the API is
+// unreachable — the order still travels to WhatsApp, and the shop replies to
+// this reference, so a backend outage must not cost a sale.
+const localOrderNumber = (skus) => {
+  const prefix = skus.some((s) => s.startsWith("PM-"))
+    ? "PM"
+    : skus.some((s) => s.startsWith("PC-"))
+    ? "PC"
+    : "PJ";
+  const d = new Date();
+  const stamp = `${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+  const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `${prefix}-${stamp}-${suffix}`;
 };
 
 const OrderModal = () => {
@@ -80,27 +97,58 @@ const OrderModal = () => {
     && customer.pincode.trim().length >= 4
     && cartItems.length > 0;
 
+  // The cart ends in a WhatsApp conversation, not a checkout: we record the
+  // order for the shop's own books, then hand the customer a fully written
+  // message. Confirmation, payment and shipment all continue in that chat.
   const handleSubmit = async () => {
+    // Claim the tab now, while the click is still the active gesture — the
+    // POST below would otherwise put the popup blocker between us and WhatsApp.
+    const tab = reserveWhatsAppTab();
     setSubmitting(true);
     setError(null);
+
+    const customerPayload = {
+      ...customer,
+      email: customer.email.trim() || undefined,
+      notes: customer.notes.trim() || undefined,
+    };
+
+    let order;
     try {
-      const payload = {
+      order = await createOrder({
         items: Object.entries(cart).map(([sku, quantity]) => ({ sku, quantity })),
-        customer: {
-          ...customer,
-          email: customer.email.trim() || undefined,
-          notes: customer.notes.trim() || undefined,
-        },
-      };
-      const order = await createOrder(payload);
-      close();
-      navigate(`/success/${order.id}`);
+        customer: customerPayload,
+      });
     } catch (err) {
-      const msg = err?.response?.data?.detail || err?.message || "Something went wrong.";
-      setError(typeof msg === "string" ? msg : "Please double-check the form.");
-    } finally {
-      setSubmitting(false);
+      // A rejected payload is our bug to show; anything else (offline, 5xx) is
+      // the shop's problem, not the customer's — send them to WhatsApp anyway.
+      const status = err?.response?.status;
+      if (status >= 400 && status < 500) {
+        tab?.close();
+        const msg = err?.response?.data?.detail || "Please double-check the form.";
+        setError(typeof msg === "string" ? msg : "Please double-check the form.");
+        setSubmitting(false);
+        return;
+      }
+      order = {
+        id: null,
+        order_number: localOrderNumber(Object.keys(cart)),
+        items: cartItems.map((i) => ({
+          sku: i.sku, name: i.name, size: i.size, pack: i.pack,
+          quantity: i.quantity, unit_price: i.price, line_total: i.line_total,
+        })),
+        subtotal, shipping, total,
+        customer: customerPayload,
+        status: "awaiting_whatsapp",
+        created_at: new Date().toISOString(),
+      };
     }
+
+    const opened = openWhatsApp(buildOrderMessage(order), tab);
+    setSubmitting(false);
+    close();
+    // The reference doubles as the URL when the API never issued an id.
+    navigate(`/success/${order.id || order.order_number}`, { state: { order, opened } });
   };
 
   const filteredProducts = useMemo(
@@ -164,14 +212,19 @@ const OrderModal = () => {
                 </div>
               </div>
 
-              {/* Steps */}
-              <div className="mb-7 flex items-center gap-3 text-[11px] uppercase tracking-[0.24em]">
+              {/* Steps — the third is not a form step but the actual finish
+                  line, and naming it here sets the expectation early. */}
+              <div className="mb-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] uppercase tracking-[0.24em]">
                 <span className={step === 1 ? "text-[#4fd1e3]" : "text-[color:var(--paper-faint)]"} data-testid="step-1-label">
                   01 · Products
                 </span>
                 <span className="h-px w-8 bg-white/20" />
-                <span className={step === 2 ? "text-[#4fd1e3]" : "text-[color:var(--paper-faint)]"} data-testid="step-2-label">
+                <span className={step === 2 && !submitting ? "text-[#4fd1e3]" : "text-[color:var(--paper-faint)]"} data-testid="step-2-label">
                   02 · Delivery
+                </span>
+                <span className="h-px w-8 bg-white/20" />
+                <span className={`inline-flex items-center gap-1.5 ${submitting ? "text-[#63e6a8]" : "text-[color:var(--paper-faint)]"}`} data-testid="step-3-label">
+                  <WhatsAppIcon className="h-3 w-3" /> 03 · WhatsApp
                 </span>
               </div>
 
@@ -324,9 +377,19 @@ const OrderModal = () => {
                     />
                   </Field>
 
-                  <div className="mt-2 flex items-start gap-2.5 text-[12.5px] text-[color:var(--paper-faint)]">
-                    <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#4fd1e3]" />
-                    <span>Delivery across West Bengal · Cash on delivery available. We call before dispatch.</span>
+                  {/* Nothing is charged here, so say plainly what the button
+                      does before it is pressed. */}
+                  <div className="mt-3 rounded-[20px] border border-[#63e6a8]/25 bg-[#63e6a8]/[0.07] p-4" data-testid="whatsapp-explainer">
+                    <div className="flex items-center gap-2.5">
+                      <WhatsAppIcon className="h-4 w-4 text-[#63e6a8]" />
+                      <span className="eyebrow !text-[10px] !text-[#63e6a8]">Finish on WhatsApp</span>
+                    </div>
+                    <p className="mt-3 text-[12.5px] leading-relaxed text-[color:var(--paper-dim)]">
+                      Pressing the button opens WhatsApp with this order already written out.
+                      We confirm stock, send payment options — UPI, a card link, or cash on
+                      delivery — and share dispatch and tracking in the same chat. Delivery
+                      across West Bengal. Nothing is charged on this site.
+                    </p>
                   </div>
 
                   {error && (
@@ -409,9 +472,9 @@ const OrderModal = () => {
                       data-testid="place-order-btn"
                     >
                       {submitting ? (
-                        <><Loader2 className="h-4 w-4 animate-spin" /> Placing…</>
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Opening WhatsApp…</>
                       ) : (
-                        <>Place order · {inr(total)}</>
+                        <><WhatsAppIcon className="h-4 w-4" /> Send order · {inr(total)}</>
                       )}
                     </button>
                     <button
@@ -425,7 +488,7 @@ const OrderModal = () => {
                   </>
                 )}
                 <div className="mt-1 text-center text-[10px] uppercase tracking-[0.2em] text-[color:var(--paper-faint)]">
-                  Payment on delivery · No card charged today
+                  Order · Pay · Track — all on WhatsApp
                 </div>
               </div>
             </div>
