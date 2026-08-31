@@ -148,12 +148,13 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
       // light blue just reads as milk. Letting the dark backdrop through is
       // what makes it look like water on a dark page.
       if (mat?.name === "Water_blue") {
-        mat.transmission = 0;
+        mat.transmission = 0.85;
         mat.transparent = true;
-        mat.opacity = 0.45;
+        mat.opacity = 0.85;
         mat.roughness = 0.02;
-        mat.metalness = 0;
-        mat.color?.set("#2e86a8");
+        mat.ior = 1.333;
+        mat.metalness = 0.05;
+        mat.color?.set("#1a6280");
         mat.needsUpdate = true;
       }
     });
@@ -202,22 +203,19 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
         {glassGeometry && (
           <mesh geometry={glassGeometry}>
             <MeshTransmissionMaterial
-              thickness={0.03}
-              ior={1.45}
-              roughness={0.07}
-              chromaticAberration={0.02}
-              anisotropicBlur={0.1}
-              distortion={0.04}
-              distortionScale={0.2}
+              thickness={0.04}
+              ior={1.49}
+              roughness={0.02}
+              chromaticAberration={0.03}
+              anisotropicBlur={0.05}
+              distortion={0.08}
+              distortionScale={0.3}
               temporalDistortion={0}
-              samples={4}
-              resolution={256}
-              attenuationColor="#d6ecf5"
-              attenuationDistance={0.6}
-              // What the shell refracts. The page behind is near-black, and a
-              // clear bottle over black just transmits black — this stands in
-              // for the studio backdrop that makes it read as glass.
-              background={new THREE.Color("#16394a")}
+              samples={8}
+              resolution={512}
+              attenuationColor="#a6e0f5"
+              attenuationDistance={0.55}
+              reflectivity={0.65}
             />
           </mesh>
         )}
@@ -257,10 +255,11 @@ const Backdrop = () => {
     // Mid-tone, not white and not black. The shell genuinely refracts this,
     // so a bright disc turns the bottle into a white blob and a black one
     // makes it disappear; a muted teal reads as water with depth.
-    const grd = g.createRadialGradient(128, 128, 10, 128, 128, 128);
-    grd.addColorStop(0, "rgba(31,86,108,0.95)");
-    grd.addColorStop(0.5, "rgba(18,55,72,0.75)");
-    grd.addColorStop(1, "rgba(4,18,26,0)");
+    const grd = g.createRadialGradient(128, 128, 5, 128, 128, 120);
+    grd.addColorStop(0, "rgba(31,90,115,0.6)");
+    grd.addColorStop(0.5, "rgba(18,60,80,0.25)");
+    grd.addColorStop(0.85, "rgba(0,0,0,0.05)");
+    grd.addColorStop(1, "rgba(0,0,0,0)");
     g.fillStyle = grd;
     g.fillRect(0, 0, 256, 256);
     return new THREE.CanvasTexture(c);
@@ -268,7 +267,7 @@ const Backdrop = () => {
 
   return (
     <mesh position={[0, 0, -0.3]}>
-      <planeGeometry args={[0.52, 0.52]} />
+      <planeGeometry args={[0.8, 0.8]} />
       <meshBasicMaterial map={texture} transparent depthWrite={false} toneMapped={false} />
     </mesh>
   );
@@ -354,24 +353,19 @@ const BottleModel = ({ className = "" }) => {
               into a milky blob. The dark surround lets it read as clear, and
               the strips become the specular highlights that describe its
               shape. */}
-          <Environment resolution={256}>
-            {/* Intensity here is the single most sensitive knob on the whole
-                model. The body is a near-white base colour at transmission
-                0.96, so it refracts and reflects whatever surrounds it: push
-                these much past ~2 and the bottle turns into an opaque white
-                blob, drop them near zero and it goes black. */}
-            <Lightformer intensity={0.08} position={[0, 0, -4]} scale={[14, 14, 1]} color="#05111a" />
-            <Lightformer form="rect" intensity={1.3} position={[-1.1, 1.2, 1.2]} scale={[0.4, 3.2, 1]} color="#eaf7ff" />
-            <Lightformer form="rect" intensity={1.3} position={[1.5, 0.3, 0.8]} scale={[0.26, 3, 1]} color="#4fd1e3" />
-            <Lightformer form="rect" intensity={1} position={[-1.4, -0.7, 0.6]} scale={[0.26, 2.4, 1]} color="#63e6a8" />
-            <Lightformer form="rect" intensity={0.7} position={[0, 2.2, 0.6]} scale={[1.6, 0.3, 1]} color="#cfeaf7" />
+          <Environment preset="park" environmentIntensity={0.95} resolution={512}>
+            <Lightformer intensity={0.15} position={[0, 0, -4]} scale={[14, 14, 1]} color="#061c12" />
+            <Lightformer form="rect" intensity={1.3} position={[-1.1, 1.2, 1.2]} scale={[0.5, 3.5, 1]} color="#e0f4ff" />
+            <Lightformer form="rect" intensity={1.1} position={[1.5, 0.3, 0.8]} scale={[0.4, 3, 1]} color="#64d89b" />
+            <Lightformer form="rect" intensity={0.9} position={[-1.4, -0.7, 0.6]} scale={[0.4, 2.4, 1]} color="#3bc2d4" />
+            <Lightformer form="rect" intensity={0.7} position={[0, 2.2, 0.6]} scale={[1.8, 0.4, 1]} color="#bce6f5" />
           </Environment>
 
           {/* A little direct light so the navy cap and the printed label read
               as lit objects rather than only as reflections. */}
-          <ambientLight intensity={0.12} />
-          <directionalLight position={[1.5, 2.5, 2]} intensity={0.85} />
-          <directionalLight position={[-2, 0.5, -1]} intensity={0.35} color="#4fd1e3" />
+          <ambientLight intensity={0.1} />
+          <directionalLight position={[1.5, 2.5, 2]} intensity={0.6} />
+          <directionalLight position={[-2, 0.5, -1]} intensity={0.25} color="#4fd1e3" />
         </Suspense>
       </Canvas>
     </div>
