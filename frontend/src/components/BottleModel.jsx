@@ -224,55 +224,6 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
   );
 };
 
-/**
- * A backdrop for the glass to refract.
- *
- * three renders the scene minus transmissive meshes into a buffer, and the
- * glass samples *that* to refract. With an empty scene that buffer is blank,
- * refraction resolves to the clear colour, and the bottle renders as a flat
- * near-white solid no matter how the lights are set — giving it a real
- * surface behind is what makes it read as glass at all.
- *
- * It is feathered rather than a flat fill: a full-frame rectangle would sit
- * inside the glass card as a visible dark box and hide the frosted fluid the
- * card is showing. This fades to nothing before the canvas edge, so it backs
- * the bottle and disappears everywhere else.
- */
-const Backdrop = () => {
-  const texture = useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = c.height = 256;
-    const g = c.getContext("2d");
-    // Light, not dark — this is the single thing that decides whether the
-    // bottle reads as glass. Transmission can only ever show you what is
-    // *behind* the object, so against the page's near-black ink a perfectly
-    // clear bottle transmits darkness and all you see is its surface sheen,
-    // which looks like white plastic. Blender's material preview looks right
-    // precisely because it has a bright studio backdrop.
-    //
-    // Feathered to nothing well before the edge, so on the page it reads as a
-    // soft backlight glow rather than a plate.
-    // Mid-tone, not white and not black. The shell genuinely refracts this,
-    // so a bright disc turns the bottle into a white blob and a black one
-    // makes it disappear; a muted teal reads as water with depth.
-    const grd = g.createRadialGradient(128, 128, 5, 128, 128, 120);
-    grd.addColorStop(0, "rgba(31,90,115,0.6)");
-    grd.addColorStop(0.5, "rgba(18,60,80,0.25)");
-    grd.addColorStop(0.85, "rgba(0,0,0,0.05)");
-    grd.addColorStop(1, "rgba(0,0,0,0)");
-    g.fillStyle = grd;
-    g.fillRect(0, 0, 256, 256);
-    return new THREE.CanvasTexture(c);
-  }, []);
-
-  return (
-    <mesh position={[0, 0, -0.3]}>
-      <planeGeometry args={[0.8, 0.8]} />
-      <meshBasicMaterial map={texture} transparent depthWrite={false} toneMapped={false} />
-    </mesh>
-  );
-};
-
 const BottleModel = ({ className = "" }) => {
   const hostRef = useRef(null);
   const pointer = useRef({ x: 0, y: 0 });
@@ -315,18 +266,6 @@ const BottleModel = ({ className = "" }) => {
 
   return (
     <div ref={hostRef} className={`relative ${className}`}>
-      {/* Still frame underneath until the model is up, so the card is never
-          empty on a slow connection. */}
-      {/* Soft bloom behind the bottle — it floats on the section now, with no
-          card to separate it from the background. */}
-      <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          background:
-            "radial-gradient(circle at center, rgba(79,209,227,0.14), rgba(99,230,168,0.06) 45%, transparent 72%)",
-        }}
-        aria-hidden
-      />
       <img
         src={BOTTLE_IMG}
         alt="Prokritir Jol 500 ml bottle"
@@ -343,7 +282,6 @@ const BottleModel = ({ className = "" }) => {
         camera={{ position: [0, 0, 0.44], fov: 30 }}
       >
         <Suspense fallback={null}>
-          <Backdrop />
           <Bottle pointer={pointer} reduced={reduced} touch={touch} onReady={() => setLoaded(true)} />
 
           {/* Studio rig baked to a cube map in-scene — no external HDRI.
