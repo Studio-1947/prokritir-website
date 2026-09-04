@@ -4,9 +4,9 @@
  * All page copy lives here so the section components stay presentational and
  * the marketing text can be edited in one place.
  *
- * ⚠️ PLACEHOLDER DATA — replace before launch:
- *    · IMPACT.counters   — illustrative figures, not audited numbers
- *    · VOICES            — written sample quotes, not real customers
+ * ⚠️ PLACEHOLDER DATA  replace before launch:
+ *    · IMPACT.counters    illustrative figures, not audited numbers
+ *    · VOICES             written sample quotes, not real customers
  */
 
 // Local product art (in /public)
@@ -33,19 +33,19 @@ const un = (id, w = 1800) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=72`;
 
 // Section backdrops are now the animated Ferrofluid layer (see
-// components/SiteBackground.jsx), so only *framed* photography remains —
+// components/SiteBackground.jsx), so only *framed* photography remains 
 // pictures inside a card, not washes behind a section.
 export const IMAGES = {
   // Long-exposure forest stream over pale rocks. The Source.
   stream: un("1437482078695-73f5ca6c96e2", 1800),
-  // Village hand pump — the small floating card on The Source.
+  // Village hand pump  the small floating card on The Source.
   tubewell: un("1677907564161-7279d5aac75f", 900),
   // Lush rural Bengal. Bento tile.
   village: un("1773023785875-9ea8c6717559", 1400),
   // Macro water droplet. Bento tile.
   droplet:
     "https://images.pexels.com/photos/247770/pexels-photo-247770.jpeg?auto=compress&cs=tinysrgb&w=1400",
-  // Golden field at sunset — inside the Our Promise counter panel.
+  // Golden field at sunset  inside the Our Promise counter panel.
   field: un("1500382017468-9049fed747ef", 1600),
 };
 
@@ -59,11 +59,15 @@ export const BRAND = {
   fssai: "12824999000123",
 };
 
+// A link is either a section on the landing page (`href`) or a route (`to`).
+// SectionLink resolves the difference; the nav's scroll-spy only watches the
+// `href` entries, since a route has no section to be inside of.
 export const NAV_LINKS = [
   { label: "The Source", href: "#source" },
   { label: "Purity", href: "#purity" },
   { label: "Bottles", href: "#bottles" },
   { label: "Our Promise", href: "#promise" },
+  { label: "Journal", to: "/journal" },
 ];
 
 export const HERO = {
@@ -111,7 +115,7 @@ export const STAGES = [
   { n: "03", name: "Reverse Osmosis", bn: "", body: "A 0.0001-micron membrane passes water molecules and turns almost everything else away." },
   { n: "04", name: "Ultraviolet", bn: "", body: "Every drop crosses 254 nm light. Nothing living continues past this point." },
   { n: "05", name: "Ozone", bn: "", body: "An oxidative polish that keeps the sealed bottle sterile until you break the ring yourself." },
-  { n: "06", name: "Mineral Balance", bn: "", body: "Calcium and magnesium metered back to 7.2 pH — purity should still taste like water." },
+  { n: "06", name: "Mineral Balance", bn: "", body: "Calcium and magnesium metered back to 7.2 pH  purity should still taste like water." },
   { n: "07", name: "Nirmalata", bn: "নির্মলতা", body: "The last stage runs on no machine at all. Every batch is tasted in Nadia before it leaves." },
 ];
 
@@ -119,7 +123,7 @@ export const BOTTLES = {
   eyebrow: "Bottles",
   title: "Choose your",
   titleAccent: "pour.",
-  body: "Ordered on WhatsApp — we confirm, take payment and share tracking in one chat. Free shipping over ₹300. Every order funds a litre of clean water for a family in rural Bengal.",
+  body: "Ordered on WhatsApp  we confirm, take payment and share tracking in one chat. Free shipping over ₹300. Every order funds a litre of clean water for a family in rural Bengal.",
   tiers: [
     {
       sku: "PJ-500-1",
@@ -159,8 +163,8 @@ export const IMPACT = {
   title: "One bottle.",
   titleAccent: "One litre, given back.",
   body:
-    "Every bottle of Prokritir Jol funds one litre of clean drinking water for a family in rural Bengal — routed through tubewell repair, filtration for village schools, and safe storage during the monsoon. We are only borrowing the water. The interest is paid in kind.",
-  // ⚠️ Illustrative figures — swap for audited numbers before launch.
+    "Every bottle of Prokritir Jol funds one litre of clean drinking water for a family in rural Bengal  routed through tubewell repair, filtration for village schools, and safe storage during the monsoon. We are only borrowing the water. The interest is paid in kind.",
+  // ⚠️ Illustrative figures  swap for audited numbers before launch.
   counters: [
     { value: "1,20,000", label: "Litres returned to villages" },
     { value: "14", label: "Villages reached in Nadia" },
@@ -170,7 +174,7 @@ export const IMPACT = {
   quoteRoman: "Purity is our mother tongue.",
 };
 
-// ⚠️ Sample copy written to show the layout — replace with real, consented
+// ⚠️ Sample copy written to show the layout  replace with real, consented
 // customer quotes before this page goes live.
 export const VOICES = [
   {
@@ -196,7 +200,7 @@ export const VOICES = [
 export const FAQ = [
   {
     q: "Where exactly does the water come from?",
-    a: "A single deep tubewell in Nadia district, West Bengal, drawing from a confined aquifer at roughly 220 feet. It is bottled at the same site — we never truck in water from elsewhere or blend sources.",
+    a: "A single deep tubewell in Nadia district, West Bengal, drawing from a confined aquifer at roughly 220 feet. It is bottled at the same site  we never truck in water from elsewhere or blend sources.",
   },
   {
     q: "If it is reverse-osmosis purified, is it stripped of minerals?",
@@ -204,11 +208,11 @@ export const FAQ = [
   },
   {
     q: "How does ordering work?",
-    a: "Pick your bottles here and the site opens WhatsApp with the order already written out — items, total and delivery address. We confirm stock in that chat, send you the payment options, and post dispatch and tracking to the same thread. One conversation from order to doorstep, and nothing is charged on this website.",
+    a: "Pick your bottles here and the site opens WhatsApp with the order already written out  items, total and delivery address. We confirm stock in that chat, send you the payment options, and post dispatch and tracking to the same thread. One conversation from order to doorstep, and nothing is charged on this website.",
   },
   {
     q: "How do I pay?",
-    a: "In the WhatsApp chat, after we confirm your order: UPI, a secure card link, or cash on delivery — whichever you prefer. We never ask for card details on this site or over the phone.",
+    a: "In the WhatsApp chat, after we confirm your order: UPI, a secure card link, or cash on delivery  whichever you prefer. We never ask for card details on this site or over the phone.",
   },
   {
     q: "Which areas do you deliver to?",

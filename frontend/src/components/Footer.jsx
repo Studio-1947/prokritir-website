@@ -1,6 +1,7 @@
 import React from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { BRAND, LOGO_IMG, FOOTER_LINKS } from "@/lib/brand";
+import SectionLink from "@/components/SectionLink";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { WHATSAPP_DISPLAY, buildEnquiryMessage, whatsappUrl } from "@/lib/whatsapp";
 
@@ -77,12 +78,13 @@ const Footer = () => (
             <ul className="mt-6 space-y-3.5">
               {col.links.map((l) => (
                 <li key={l.label}>
-                  <a
+                  <SectionLink
                     href={l.href}
+                    to={l.to}
                     className="text-[14px] text-[color:var(--paper-dim)] transition-colors hover:text-[#4fd1e3]"
                   >
                     {l.label}
-                  </a>
+                  </SectionLink>
                 </li>
               ))}
             </ul>

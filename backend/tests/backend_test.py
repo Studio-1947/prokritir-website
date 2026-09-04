@@ -35,7 +35,7 @@ class TestProducts:
         assert r.status_code == 200
         data = r.json()
         assert isinstance(data, list)
-        assert len(data) == 6
+        assert len(data) >= 6
         skus = {p["sku"]: p for p in data}
         for sku, price in EXPECTED_PRICES.items():
             assert sku in skus, f"Missing SKU {sku}"

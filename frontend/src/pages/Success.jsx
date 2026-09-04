@@ -29,7 +29,7 @@ const Success = () => {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  // False when the browser swallowed the tab we opened at checkout — then the
+  // False when the browser swallowed the tab we opened at checkout  then the
   // headline has to ask for one more click rather than claim the order is sent.
   const handedOff = state?.opened !== false;
 
@@ -60,12 +60,12 @@ const Success = () => {
   const chatMessage = handedOff
     ? buildFollowUpMessage(orderNumber)
     : order
-    ? buildOrderMessage(order)
-    : buildFollowUpMessage(orderNumber);
+      ? buildOrderMessage(order)
+      : buildFollowUpMessage(orderNumber);
 
   return (
     <div className="relative z-10 min-h-screen overflow-hidden grain">
-      {/* Atmosphere — the ferrofluid background shows through behind this. */}
+      {/* Atmosphere  the ferrofluid background shows through behind this. */}
       <div className="aurora drift absolute -left-40 top-0 h-[520px] w-[520px]" aria-hidden />
       <div className="aurora aurora-mint absolute -right-40 bottom-0 h-[460px] w-[460px]" aria-hidden />
 
@@ -90,7 +90,7 @@ const Success = () => {
       </div>
 
       <div className="relative z-10 mx-auto grid max-w-[1180px] gap-10 px-6 pb-24 pt-10 md:px-10 lg:grid-cols-[1.1fr_1fr]">
-        {/* LEFT — the handoff */}
+        {/* LEFT  the handoff */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,12 +122,12 @@ const Success = () => {
               <>
                 Your order is waiting in our WhatsApp chat. The team in {BRAND.origin} confirms
                 stock, sends the payment options, and posts dispatch and tracking in the same
-                thread — so the whole order lives in one conversation.
+                thread  so the whole order lives in one conversation.
               </>
             ) : (
               <>
                 Your browser blocked the WhatsApp tab, so the order has not reached us yet.
-                Tap below and it opens with everything already written out — nothing to retype.
+                Tap below and it opens with everything already written out  nothing to retype.
               </>
             )}
           </p>
@@ -180,13 +180,13 @@ const Success = () => {
             </div>
           )}
 
-          {/* What happens next — the three stages, all in the one chat. */}
+          {/* What happens next  the three stages, all in the one chat. */}
           <div className="mt-11 max-w-lg space-y-3.5" data-testid="whatsapp-steps">
             <NextStep n="01" title="Confirmation">
               We check stock and confirm your delivery slot in the chat, usually within a few hours.
             </NextStep>
             <NextStep n="02" title="Payment">
-              Pay by UPI or a secure card link sent in the chat — or choose cash on delivery. Nothing is charged on this site.
+              Pay by UPI or a secure card link sent in the chat  or choose cash on delivery. Nothing is charged on this site.
             </NextStep>
             <NextStep n="03" title="Shipment">
               We post the dispatch note and tracking to the same thread, and you can ask for an update any time by replying.
@@ -197,13 +197,13 @@ const Success = () => {
             <Stat label="Ships in" value="24 hrs" />
             <Stat
               label="Litres given back"
-              value={order ? `${order.items.reduce((s, i) => s + i.pack * i.quantity, 0)}` : "—"}
+              value={order ? `${order.items.reduce((s, i) => s + i.pack * i.quantity, 0)}` : ""}
             />
             <Stat label="Payment" value="On WhatsApp" />
           </div>
         </motion.div>
 
-        {/* RIGHT — receipt */}
+        {/* RIGHT  receipt */}
         <motion.div
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
@@ -211,64 +211,64 @@ const Success = () => {
           className="relative"
         >
           <GlassPanel radius={32} overflowVisible className="edge-light" data-testid="order-receipt">
-          <div className="p-8 md:p-9">
-            <div className="eyebrow mb-6">Order summary</div>
-            {order ? (
-              <>
-                <div className="space-y-3.5 pb-5" data-testid="receipt-items">
-                  {order.items.map((i) => (
-                    <div key={i.sku} className="flex justify-between gap-3 text-[14px]" data-testid={`receipt-line-${i.sku}`}>
-                      <div className="min-w-0 pr-3">
-                        <div className="truncate">{i.name}</div>
-                        <div className="text-[12px] text-[color:var(--paper-faint)]">
-                          ×{i.quantity} · {inr(i.unit_price)} each
+            <div className="p-8 md:p-9">
+              <div className="eyebrow mb-6">Order summary</div>
+              {order ? (
+                <>
+                  <div className="space-y-3.5 pb-5" data-testid="receipt-items">
+                    {order.items.map((i) => (
+                      <div key={i.sku} className="flex justify-between gap-3 text-[14px]" data-testid={`receipt-line-${i.sku}`}>
+                        <div className="min-w-0 pr-3">
+                          <div className="truncate">{i.name}</div>
+                          <div className="text-[12px] text-[color:var(--paper-faint)]">
+                            ×{i.quantity} · {inr(i.unit_price)} each
+                          </div>
                         </div>
+                        <div className="whitespace-nowrap font-semibold">{inr(i.line_total)}</div>
                       </div>
-                      <div className="whitespace-nowrap font-semibold">{inr(i.line_total)}</div>
+                    ))}
+                  </div>
+                  <div className="rule" />
+
+                  <div className="space-y-2.5 pt-5 text-[14px] text-[color:var(--paper-dim)]">
+                    <div className="flex justify-between"><span>Subtotal</span><span>{inr(order.subtotal)}</span></div>
+                    <div className="flex justify-between">
+                      <span>Shipping</span>
+                      <span>{order.shipping === 0 ? "Free" : inr(order.shipping)}</span>
                     </div>
-                  ))}
-                </div>
-                <div className="rule" />
+                    <div className="rule my-3" />
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-display text-[20px] text-[color:var(--paper)]">Total</span>
+                      <span className="font-display text-[28px] text-[color:var(--paper)]" data-testid="receipt-total">
+                        {inr(order.total)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 pt-1 text-[12.5px] text-[#63e6a8]">
+                      <WhatsAppIcon className="h-3.5 w-3.5" /> Payable on WhatsApp after confirmation
+                    </div>
+                  </div>
 
-                <div className="space-y-2.5 pt-5 text-[14px] text-[color:var(--paper-dim)]">
-                  <div className="flex justify-between"><span>Subtotal</span><span>{inr(order.subtotal)}</span></div>
-                  <div className="flex justify-between">
-                    <span>Shipping</span>
-                    <span>{order.shipping === 0 ? "Free" : inr(order.shipping)}</span>
+                  <div className="rule mt-7" />
+                  <div className="pt-7 text-[13.5px] leading-relaxed text-[color:var(--paper-dim)]">
+                    <div className="eyebrow mb-3">Delivering to</div>
+                    <div className="font-semibold text-[color:var(--paper)]" data-testid="receipt-customer-name">
+                      {order.customer.name}
+                    </div>
+                    <div>{order.customer.phone}</div>
+                    <div className="mt-1">
+                      {order.customer.address_line}, {order.customer.city}, {order.customer.state} {order.customer.pincode}
+                    </div>
+                    {order.customer.notes && (
+                      <div className="mt-2 italic text-[color:var(--paper-faint)]">Note: {order.customer.notes}</div>
+                    )}
                   </div>
-                  <div className="rule my-3" />
-                  <div className="flex items-baseline justify-between">
-                    <span className="font-display text-[20px] text-[color:var(--paper)]">Total</span>
-                    <span className="font-display text-[28px] text-[color:var(--paper)]" data-testid="receipt-total">
-                      {inr(order.total)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 pt-1 text-[12.5px] text-[#63e6a8]">
-                    <WhatsAppIcon className="h-3.5 w-3.5" /> Payable on WhatsApp after confirmation
-                  </div>
+                </>
+              ) : (
+                <div className="text-[14px] text-[color:var(--paper-faint)]">
+                  {error ? "Open the chat above and we'll pull your order up by its reference." : "Fetching your receipt…"}
                 </div>
-
-                <div className="rule mt-7" />
-                <div className="pt-7 text-[13.5px] leading-relaxed text-[color:var(--paper-dim)]">
-                  <div className="eyebrow mb-3">Delivering to</div>
-                  <div className="font-semibold text-[color:var(--paper)]" data-testid="receipt-customer-name">
-                    {order.customer.name}
-                  </div>
-                  <div>{order.customer.phone}</div>
-                  <div className="mt-1">
-                    {order.customer.address_line}, {order.customer.city}, {order.customer.state} {order.customer.pincode}
-                  </div>
-                  {order.customer.notes && (
-                    <div className="mt-2 italic text-[color:var(--paper-faint)]">Note: {order.customer.notes}</div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <div className="text-[14px] text-[color:var(--paper-faint)]">
-                {error ? "Open the chat above and we'll pull your order up by its reference." : "Fetching your receipt…"}
-              </div>
-            )}
-          </div>
+              )}
+            </div>
           </GlassPanel>
 
           <Link

@@ -4,7 +4,7 @@ import GlassPanel from "@/components/GlassPanel";
 import { IMPACT, IMAGES } from "@/lib/brand";
 
 /**
- * Our Promise — copy on the left, a glass counter panel on the right.
+ * Our Promise  copy on the left, a glass counter panel on the right.
  * The counters are the only place on the page where numbers get this large.
  */
 const Impact = () => (
@@ -33,25 +33,25 @@ const Impact = () => (
         <Reveal delay={0.12} className="lg:col-span-6">
           <GlassPanel radius={36} className="edge-light">
             <div className="p-8 md:p-11">
-            <div className="space-y-8">
-              {IMPACT.counters.map((c, i) => (
-                <div key={c.label}>
-                  <div className="font-display text-[clamp(2.6rem,5vw,3.8rem)] leading-none ink-accent">
-                    {c.value}
+              <div className="space-y-8">
+                {IMPACT.counters.map((c, i) => (
+                  <div key={c.label}>
+                    <div className="font-display text-[clamp(2.6rem,5vw,3.8rem)] leading-none ink-accent">
+                      {c.value}
+                    </div>
+                    <div className="eyebrow mt-3">{c.label}</div>
+                    {i < IMPACT.counters.length - 1 && <div className="rule mt-8" />}
                   </div>
-                  <div className="eyebrow mt-3">{c.label}</div>
-                  {i < IMPACT.counters.length - 1 && <div className="rule mt-8" />}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
-              <img
-                src={IMAGES.field}
-                alt="Late sun over an open field"
-                className="h-40 w-full object-cover"
-              />
-            </div>
+              <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
+                <img
+                  src={IMAGES.field}
+                  alt="Late sun over an open field"
+                  className="h-40 w-full object-cover"
+                />
+              </div>
             </div>
           </GlassPanel>
         </Reveal>

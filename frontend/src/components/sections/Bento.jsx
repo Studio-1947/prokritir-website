@@ -4,7 +4,7 @@ import GlassPanel from "@/components/GlassPanel";
 import { IMAGES, BRAND } from "@/lib/brand";
 
 /**
- * Bento — mixed-size tiles, the counterweight to the even grid above it.
+ * Bento  mixed-size tiles, the counterweight to the even grid above it.
  * A tall photo anchors the left, statements and details fill the right.
  */
 const Bento = () => (

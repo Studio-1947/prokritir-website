@@ -4,7 +4,7 @@ import GlassPanel from "@/components/GlassPanel";
 import { SOURCE, IMAGES } from "@/lib/brand";
 
 /**
- * The Source — asymmetric split. The photograph runs wide on the left and the
+ * The Source  asymmetric split. The photograph runs wide on the left and the
  * glass copy panel is pulled back over its edge on desktop, so the two planes
  * overlap instead of sitting in tidy columns.
  */
@@ -53,25 +53,25 @@ const Source = () => (
         <Reveal delay={0.12} className="relative z-10 lg:col-span-5 lg:-ml-24">
           <GlassPanel radius={32} className="edge-light">
             <div className="p-8 md:p-11">
-            {SOURCE.paragraphs.map((p, i) => (
-              <p
-                key={i}
-                className={`text-[15px] leading-relaxed text-[color:var(--paper-dim)] ${i > 0 ? "mt-5" : ""}`}
-              >
-                {p}
-              </p>
-            ))}
-
-            <div className="mt-9 space-y-4">
-              {SOURCE.facts.map((f) => (
-                <div key={f.k} className="flex items-baseline gap-4">
-                  <div className="font-display w-[132px] shrink-0 text-[18px] text-[#4fd1e3]">
-                    {f.k}
-                  </div>
-                  <div className="text-[13px] text-[color:var(--paper-faint)]">{f.v}</div>
-                </div>
+              {SOURCE.paragraphs.map((p, i) => (
+                <p
+                  key={i}
+                  className={`text-[15px] leading-relaxed text-[color:var(--paper-dim)] ${i > 0 ? "mt-5" : ""}`}
+                >
+                  {p}
+                </p>
               ))}
-            </div>
+
+              <div className="mt-9 space-y-4">
+                {SOURCE.facts.map((f) => (
+                  <div key={f.k} className="flex items-baseline gap-4">
+                    <div className="font-display w-[132px] shrink-0 text-[18px] text-[#4fd1e3]">
+                      {f.k}
+                    </div>
+                    <div className="text-[13px] text-[color:var(--paper-faint)]">{f.v}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </GlassPanel>
         </Reveal>

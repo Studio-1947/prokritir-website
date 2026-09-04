@@ -7,7 +7,7 @@ import { BRAND, HERO } from "@/lib/brand";
 import { useOrder } from "@/lib/orderContext";
 
 /**
- * Hero — glass content floating on the site-wide ferrofluid background.
+ * Hero  glass content floating on the site-wide ferrofluid background.
  * Nothing here paints its own backdrop beyond a soft left scrim, so the fluid
  * is what you see behind the headline.
  */
@@ -77,7 +77,7 @@ const Hero = () => {
             </motion.div>
           </div>
 
-          {/* The bottle itself — no card. A glass box drawn around a 3D object
+          {/* The bottle itself  no card. A glass box drawn around a 3D object
               reads as a picture in a frame and kills the illusion that it is
               sitting in the page. The card's content survives as the price
               chip below it; the name already lives in the nav. */}
@@ -110,21 +110,21 @@ const Hero = () => {
           className="mt-16"
         >
           <GlassPanel radius={28} className="edge-light">
-          <div className="grid grid-cols-2 gap-px md:grid-cols-4">
-          {HERO.stats.map((s) => (
-            <div key={s.label} className="px-6 py-7 md:px-8 md:py-8">
-              <div className="font-display text-[40px] leading-none md:text-[48px]">
-                {s.value}
-                {s.unit && (
-                  <span className="ml-1.5 font-sans text-[15px] font-medium tracking-tight text-[#4fd1e3]">
-                    {s.unit}
-                  </span>
-                )}
-              </div>
-              <div className="eyebrow mt-3">{s.label}</div>
+            <div className="grid grid-cols-2 gap-px md:grid-cols-4">
+              {HERO.stats.map((s) => (
+                <div key={s.label} className="px-6 py-7 md:px-8 md:py-8">
+                  <div className="font-display text-[40px] leading-none md:text-[48px]">
+                    {s.value}
+                    {s.unit && (
+                      <span className="ml-1.5 font-sans text-[15px] font-medium tracking-tight text-[#4fd1e3]">
+                        {s.unit}
+                      </span>
+                    )}
+                  </div>
+                  <div className="eyebrow mt-3">{s.label}</div>
+                </div>
+              ))}
             </div>
-          ))}
-          </div>
           </GlassPanel>
         </motion.div>
       </div>

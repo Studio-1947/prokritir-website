@@ -6,7 +6,7 @@ import GlassPanel from "@/components/GlassPanel";
 import { FAQ } from "@/lib/brand";
 
 /**
- * FAQ — controlled accordion. One panel open at a time; height animates so
+ * FAQ  controlled accordion. One panel open at a time; height animates so
  * the section below settles rather than jumping.
  */
 const Faq = () => {
@@ -33,9 +33,8 @@ const Faq = () => {
                 <Reveal key={item.q} delay={Math.min(i * 0.05, 0.25)}>
                   <GlassPanel
                     radius={22}
-                    className={`mb-3 transition-shadow duration-300 ${
-                      isOpen ? "ring-1 ring-[#4fd1e3]/35" : ""
-                    }`}
+                    className={`mb-3 transition-shadow duration-300 ${isOpen ? "ring-1 ring-[#4fd1e3]/35" : ""
+                      }`}
                   >
                     <button
                       type="button"
@@ -45,9 +44,8 @@ const Faq = () => {
                     >
                       <span className="text-[15.5px] font-semibold tracking-tight">{item.q}</span>
                       <Plus
-                        className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
-                          isOpen ? "rotate-45 text-[#4fd1e3]" : "text-white/40"
-                        }`}
+                        className={`h-5 w-5 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-45 text-[#4fd1e3]" : "text-white/40"
+                          }`}
                       />
                     </button>
                     <AnimatePresence initial={false}>

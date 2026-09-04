@@ -1,12 +1,12 @@
 /**
  * WhatsApp order handoff.
  *
- * Prokritir Jol has no on-site checkout. Everything after the cart — confirming
- * stock, taking payment, and tracking the shipment — happens as a conversation
+ * Prokritir Jol has no on-site checkout. Everything after the cart  confirming
+ * stock, taking payment, and tracking the shipment  happens as a conversation
  * on WhatsApp. This site's only job is to compose a first message that is
  * already complete, so the customer never has to retype an address or a total.
  *
- * ⚠️ PLACEHOLDER — WHATSAPP_NUMBER below is a dummy line that goes nowhere.
+ * ⚠️ PLACEHOLDER  WHATSAPP_NUMBER below is a dummy line that goes nowhere.
  *    Replace it with the real business number before launch, or set
  *    REACT_APP_WHATSAPP_NUMBER in the frontend .env (no "+", country code
  *    included, e.g. 919830098300).
@@ -29,7 +29,7 @@ const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
 /**
  * The order, written out as a WhatsApp message. `*bold*` is WhatsApp's own
- * markup — it renders in the chat, so the shop-side reader gets a scannable
+ * markup  it renders in the chat, so the shop-side reader gets a scannable
  * ticket rather than a wall of text.
  */
 export const buildOrderMessage = (order) => {
@@ -40,7 +40,7 @@ export const buildOrderMessage = (order) => {
     "",
     "*Items*",
     ...order.items.map(
-      (i) => `• ${i.name} — ×${i.quantity} — ${inr(i.line_total)}`
+      (i) => `• ${i.name}  ×${i.quantity}  ${inr(i.line_total)}`
     ),
     "",
     `Subtotal: ${inr(order.subtotal)}`,
@@ -51,7 +51,7 @@ export const buildOrderMessage = (order) => {
     c.name,
     c.phone,
     ...(c.email ? [c.email] : []),
-    `${c.address_line}, ${c.city}, ${c.state} — ${c.pincode}`,
+    `${c.address_line}, ${c.city}, ${c.state}  ${c.pincode}`,
     ...(c.notes ? [`Note: ${c.notes}`] : []),
     "",
     "Please confirm this order and send the payment details (UPI / link). I'll follow the delivery here.",
@@ -59,19 +59,18 @@ export const buildOrderMessage = (order) => {
   return lines.join("\n");
 };
 
-/** Follow-up message for an order already placed — payment or delivery status. */
+/** Follow-up message for an order already placed  payment or delivery status. */
 export const buildFollowUpMessage = (orderNumber) =>
   orderNumber
-    ? `Hello Prokritir Jol — about my order *${orderNumber}*. Could you share an update on payment / delivery?`
-    : "Hello Prokritir Jol — I'd like to ask about an order.";
+    ? `Hello Prokritir Jol  about my order *${orderNumber}*. Could you share an update on payment / delivery?`
+    : "Hello Prokritir Jol  I'd like to ask about an order.";
 
 /** Plain enquiry, for contact links that are not tied to an order. */
 export const buildEnquiryMessage = () =>
-  "Hello Prokritir Jol — I'd like to know more about your bottles and delivery.";
+  "Hello Prokritir Jol  I'd like to know more about your bottles and delivery.";
 
 export const whatsappUrl = (message) =>
-  `https://wa.me/${WHATSAPP_NUMBER}${
-    message ? `?text=${encodeURIComponent(message)}` : ""
+  `https://wa.me/${WHATSAPP_NUMBER}${message ? `?text=${encodeURIComponent(message)}` : ""
   }`;
 
 // window.open() with "noopener" returns null by spec, which would leave us
@@ -95,7 +94,7 @@ const openTab = (url) => {
  * Browsers only allow window.open() while a user gesture is still on the stack.
  * The order POST sits between the click and the handoff, so without this the
  * popup blocker eats the WhatsApp tab on the one click that matters.
- * Returns null if the browser blocked it anyway — callers must handle that.
+ * Returns null if the browser blocked it anyway  callers must handle that.
  */
 export const reserveWhatsAppTab = () => openTab("");
 

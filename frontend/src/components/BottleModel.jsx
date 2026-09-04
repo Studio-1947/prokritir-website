@@ -11,34 +11,34 @@ import { BOTTLE_IMG } from "@/lib/brand";
  * water genuinely refract rather than being faked with opacity. Its origin
  * sits at the base and it is modelled at real scale (0.212 m tall), so the
  * inner <primitive> is lifted by half its height to put the bottle's middle
- * on the rotation axis — otherwise a tilt swings it around its feet.
+ * on the rotation axis  otherwise a tilt swings it around its feet.
  *
  * Two deliberate performance choices, on a page that already runs a WebGL
  * background and ~27 SVG-filter glass panels:
  *  · Lighting is baked from <Lightformer>s inside <Environment> rather than a
- *    drei preset. Presets fetch an HDRI from a CDN — an external dependency
+ *    drei preset. Presets fetch an HDRI from a CDN  an external dependency
  *    this site otherwise doesn't have, and a blank bottle if it fails.
  *  · The canvas only renders while it is actually on screen. Scrolled past,
  *    frameloop drops to "never" and it costs nothing.
  */
 
 /**
- * Two models exist in /public and both are wired up — swapping is this one
+ * Two models exist in /public and both are wired up  swapping is this one
  * line, since they share dimensions (0.212 m tall, origin at the base) and
  * every mesh/material name the traverse below looks for:
  *
- *   Untitled.glb             — Blender build. Better bottle form, a real cap
+ *   Untitled.glb              Blender build. Better bottle form, a real cap
  *                              and a water mesh. Its label UVs used to be
  *                              stretched, which is why this file sat unused;
  *                              the re-export fixed them (uniform texel
  *                              density, band aspect within 5% of the 1024×288
  *                              artwork) so the print now reads at any angle.
- *   prokritir_jol_500ml.glb  — lathe build. Also correct, and a third of the
+ *   prokritir_jol_500ml.glb   lathe build. Also correct, and a third of the
  *                              weight. The fallback if the Blender build
  *                              proves too heavy on slow connections.
  *
  * On the Blender build for the silhouette and the water. It costs 4.35 MB
- * against the lathe build's 1.87 MB — unquantized, no Draco — which is the
+ * against the lathe build's 1.87 MB  unquantized, no Draco  which is the
  * one thing to revisit if the hero starts loading slowly.
  */
 const MODEL = "/Untitled.glb";
@@ -46,7 +46,7 @@ const HALF_HEIGHT = 0.106; // half of the model's 0.212 m bounding box
 
 // Standing yaw that turns the printed front of the label toward the camera.
 //
-// The label sheet carries the artwork twice — one panel front, one back — and
+// The label sheet carries the artwork twice  one panel front, one back  and
 // where the wrap *starts* is an authoring choice each export made differently.
 // Untitled.glb begins its wrap a quarter turn round, so with no correction the
 // camera at rotation 0 looks straight at u=0.5: the seam between the two
@@ -55,7 +55,7 @@ const HALF_HEIGHT = 0.106; // half of the model's 0.212 m bounding box
 //
 // Both figures are read off each file's own label UVs (u→yaw is exactly linear
 // in both, and the artwork centres measure to u=0.25/0.75), so this is a
-// measurement, not a nudge — but it is per-file, and a re-export that changes
+// measurement, not a nudge  but it is per-file, and a re-export that changes
 // where the seam falls will need it re-measured.
 const LABEL_FRONT_YAW = {
   "/Untitled.glb": Math.PI / 2,
@@ -65,7 +65,7 @@ const LABEL_FRONT_YAW = {
 // animation keeps working in "0 = facing the viewer" terms.
 const FRONT_YAW = LABEL_FRONT_YAW[MODEL] ?? 0;
 
-// The Blender export ships a 3×3 m ground plane with the bottle — fourteen
+// The Blender export ships a 3×3 m ground plane with the bottle  fourteen
 // times its width. Useful for rendering in Blender, but here it would fill
 // the frame as a giant slab, so it is hidden on load. Harmless for the lathe
 // build, which has no such mesh.
@@ -75,10 +75,10 @@ const HIDDEN_MESHES = new Set(["Plane", "Floor"]);
 // scene and drawn separately with a transmission material that works.
 const GLASS_MESHES = new Set(["glass", "glass_water", "Bottle_PET", "PET_clear"]);
 
-// The cap, under both models' naming — retinted below.
+// The cap, under both models' naming  retinted below.
 const CAP_MATERIALS = new Set(["Cap_navy", "cap_navy"]);
 // Authored at baseColorFactor [0, 0.006, 0.018]. Those are *linear* values, so
-// it lands around #001224 — all but black, and against a near-black page the
+// it lands around #001224  all but black, and against a near-black page the
 // cap stops reading as an object and turns into a hole at the top of the
 // bottle. This is the same navy a stop lighter, and three converts the sRGB
 // hex to linear itself. Set here rather than in the GLB so a re-export from
@@ -107,7 +107,7 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
 
       // The water is authored with transmission 1, same as the bottle around
       // it. three renders the scene *minus every transmissive mesh* into the
-      // buffer that transmission refracts — so with both set that way the
+      // buffer that transmission refracts  so with both set that way the
       // PET has nothing to refract and the water never appears: the bottle
       // reads as empty white plastic.
       //
@@ -117,13 +117,13 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
       // than a solid core.
       // This export carries transmission but no KHR_materials_volume, so
       // three treats the PET as a thin surface: no refraction depth, no
-      // attenuation, and the near-white base colour ends up dominating —
+      // attenuation, and the near-white base colour ends up dominating 
       // which is why the bottle renders as a white solid. Giving it a
       // thickness switches on volumetric refraction and lets the tint and
       // the water behind it actually show through.
       // The glass shell is hidden here and re-rendered below with drei's
       // MeshTransmissionMaterial. three's own KHR_materials_transmission path
-      // is not producing transparency in this stack (three 0.185 / R3F 9) —
+      // is not producing transparency in this stack (three 0.185 / R3F 9) 
       // proven by tinting the base colour red, which came back a flat opaque
       // red instead of red-tinted glass. drei's material runs its own
       // refraction pass and does not depend on it.
@@ -170,7 +170,7 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
       return;
     }
     if (touch) {
-      // No cursor to follow on a phone, so it turns on its own — slowly
+      // No cursor to follow on a phone, so it turns on its own  slowly
       // enough to read the label as it comes round.
       ref.current.rotation.y += t * 0.28;
       ref.current.rotation.x = damp(ref.current.rotation.x, 0.04, 2, t);
@@ -178,7 +178,7 @@ const Bottle = ({ pointer, reduced, touch, onReady }) => {
       return;
     }
     // Cursor drives yaw and a lighter pitch; damped so it trails the pointer
-    // rather than snapping to it. Wider range than the old card version —
+    // rather than snapping to it. Wider range than the old card version 
     // at this size it can afford to actually turn.
     ref.current.rotation.y = damp(ref.current.rotation.y, pointer.current.x * 1.05, 3.2, t);
     ref.current.rotation.x = damp(ref.current.rotation.x, -pointer.current.y * 0.26, 3.2, t);
@@ -270,9 +270,8 @@ const BottleModel = ({ className = "" }) => {
         src={BOTTLE_IMG}
         alt="Prokritir Jol 500 ml bottle"
         draggable={false}
-        className={`absolute inset-0 m-auto h-full w-auto select-none object-contain transition-opacity duration-700 ${
-          loaded ? "opacity-0" : "opacity-100"
-        }`}
+        className={`absolute inset-0 m-auto h-full w-auto select-none object-contain transition-opacity duration-700 ${loaded ? "opacity-0" : "opacity-100"
+          }`}
       />
       <Canvas
         className="!absolute inset-0"
@@ -284,7 +283,7 @@ const BottleModel = ({ className = "" }) => {
         <Suspense fallback={null}>
           <Bottle pointer={pointer} reduced={reduced} touch={touch} onReady={() => setLoaded(true)} />
 
-          {/* Studio rig baked to a cube map in-scene — no external HDRI.
+          {/* Studio rig baked to a cube map in-scene  no external HDRI.
               Deliberately a DARK field with a few narrow bright strips, the
               way glassware is actually lit: transmissive material refracts
               whatever surrounds it, so a big white source turns the bottle

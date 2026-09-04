@@ -4,7 +4,7 @@ import GlassPanel from "@/components/GlassPanel";
 import { STAGES } from "@/lib/brand";
 
 /**
- * Seven Stages — glass cards frosting the ferrofluid behind them. The seventh
+ * Seven Stages  glass cards frosting the ferrofluid behind them. The seventh
  * (Nirmalata) is the only human step, so it runs double-width with the accent
  * treatment and closes the grid rather than trailing off it.y
  */
@@ -39,27 +39,26 @@ const Process = () => (
                 className={`glass-hover h-full ${isLast ? "ring-1 ring-[#63e6a8]/35" : ""}`}
               >
                 <div className="p-7">
-                <div className="flex items-start justify-between gap-4">
-                  <span
-                    className={`font-display text-[34px] leading-none ${
-                      isLast ? "ink-accent" : "text-white"
-                    }`}
-                  >
-                    {s.n}
-                  </span>
-                  {isLast && (
-                    <span className="rounded-full border border-[#63e6a8]/40 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#63e6a8]">
-                      By hand
+                  <div className="flex items-start justify-between gap-4">
+                    <span
+                      className={`font-display text-[34px] leading-none ${isLast ? "ink-accent" : "text-white"
+                        }`}
+                    >
+                      {s.n}
                     </span>
-                  )}
-                </div>
-                <h3 className="mt-6 text-[17px] font-semibold tracking-tight">
-                  {s.name}
-                  {s.bn && <span className="font-bn ml-2 text-[15px] text-[#63e6a8]">{s.bn}</span>}
-                </h3>
-                <p className="mt-3 text-[13.5px] leading-relaxed text-[color:var(--paper-faint)]">
-                  {s.body}
-                </p>
+                    {isLast && (
+                      <span className="rounded-full border border-[#63e6a8]/40 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#63e6a8]">
+                        By hand
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="mt-6 text-[17px] font-semibold tracking-tight">
+                    {s.name}
+                    {s.bn && <span className="font-bn ml-2 text-[15px] text-[#63e6a8]">{s.bn}</span>}
+                  </h3>
+                  <p className="mt-3 text-[13.5px] leading-relaxed text-[color:var(--paper-faint)]">
+                    {s.body}
+                  </p>
                 </div>
               </GlassPanel>
             </Reveal>

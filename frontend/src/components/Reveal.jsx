@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 /**
  * Scroll-reveal wrapper. Sections fade and rise once as they enter the
- * viewport — `once` so nothing re-animates when you scroll back up, which
+ * viewport  `once` so nothing re-animates when you scroll back up, which
  * reads as jitter rather than polish.
  */
 const Reveal = ({ children, delay = 0, y = 26, className = "", ...rest }) => (
