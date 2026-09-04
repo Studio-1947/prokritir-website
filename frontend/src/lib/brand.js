@@ -15,11 +15,15 @@ export const LOGO_IMG = "/logo.png";
 // Shrink-wrapped multipacks, shot on transparency.
 export const PACK_500_IMG = "/500mlpacks.webp";
 export const PACK_1L_IMG = "/1Lpacks.webp";
+// The 20 L jar is drawn rather than shot  vector, so it stays sharp at any
+// card size and needs no photography to exist yet.
+export const JAR_20L_IMG = "/20l-jar.svg";
 
 export const getProductImage = (p) => {
   if (p?.image) return p.image;
   const sku = typeof p === "string" ? p : p?.sku;
   if (!sku) return BOTTLE_IMG;
+  if (sku === "PJ-20L-1") return JAR_20L_IMG;
   if (sku === "PJ-500-12" || sku === "PJ-500-24") return PACK_500_IMG;
   if (sku === "PJ-1L-12" || sku === "PJ-1L-24") return PACK_1L_IMG;
   if (sku.startsWith("PJ-500") && (sku.includes("12") || sku.includes("24"))) return PACK_500_IMG;
@@ -132,6 +136,10 @@ export const BOTTLES = {
       price: 20,
       note: "One bottle",
       image: BOTTLE_IMG,
+      // Tall subject in a frame sized for square pack shots: scale to the
+      // height and let the width fall where it may, and narrow the contact
+      // shadow to the object actually standing there.
+      portrait: true,
       perks: ["500 ml bottle", "Tamper-evident seal", "Ideal for a first taste"],
       featured: false,
     },
@@ -153,6 +161,20 @@ export const BOTTLES = {
       note: "For the household",
       image: PACK_1L_IMG,
       perks: ["12 × 1 litre", "Free delivery", "Best value per litre"],
+      featured: false,
+    },
+    {
+      sku: "PJ-20L-1",
+      name: "Twenty Litre",
+      size: "20 L jar",
+      price: 120,
+      note: "Home & office",
+      image: JAR_20L_IMG,
+      portrait: true,
+      // Deliberately no "free delivery" claim: at ₹120 a single jar sits below
+      // the ₹300 free-shipping threshold the backend enforces, and a perk the
+      // checkout then contradicts is worse than one fewer perk.
+      perks: ["20 litres, one sealed jar", "Empty jar collected on delivery", "₹6 a litre  our lowest"],
       featured: false,
     },
   ],

@@ -5,6 +5,7 @@ import GlassPanel from "@/components/GlassPanel";
 import BottleModel from "@/components/BottleModel";
 import { BRAND, HERO } from "@/lib/brand";
 import { useOrder } from "@/lib/orderContext";
+import { useReady } from "@/lib/readyContext";
 
 /**
  * Hero  glass content floating on the site-wide ferrofluid background.
@@ -13,6 +14,13 @@ import { useOrder } from "@/lib/orderContext";
  */
 const Hero = () => {
   const { open } = useOrder();
+
+  // The preloader covers this section until the 3D bottle's assets are in, so
+  // the entrance is held rather than played to a covered screen. Each element
+  // keeps its own `initial` values as the held state, so the staggered rise
+  // below is unchanged  it just starts when the curtain lifts.
+  const { ready } = useReady();
+  const rise = (from) => (ready ? { opacity: 1, y: 0, scale: 1 } : from);
 
   return (
     <section id="top" className="relative min-h-[100svh] overflow-hidden grain">
@@ -34,7 +42,7 @@ const Hero = () => {
           <div className="relative z-10 lg:col-span-6">
             <motion.h1
               initial={{ opacity: 0, y: 26 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={rise({ opacity: 0, y: 26 })}
               transition={{ duration: 0.95, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               className="font-display mt-7 text-[clamp(2.6rem,5.4vw,4.4rem)]"
             >
@@ -45,7 +53,7 @@ const Hero = () => {
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={rise({ opacity: 0, y: 20 })}
               transition={{ duration: 0.9, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
               className="mt-8 max-w-xl text-[16px] md:text-[17px] leading-relaxed text-[color:var(--paper-dim)]"
             >
@@ -54,7 +62,7 @@ const Hero = () => {
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={rise({ opacity: 0, y: 20 })}
               transition={{ duration: 0.9, delay: 0.34, ease: [0.22, 1, 0.36, 1] }}
               className="mt-10 flex flex-wrap items-center gap-3"
             >
@@ -83,7 +91,7 @@ const Hero = () => {
               chip below it; the name already lives in the nav. */}
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.94 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            animate={rise({ opacity: 0, y: 40, scale: 0.94 })}
             transition={{ duration: 1.2, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="relative lg:col-span-6"
           >
@@ -105,7 +113,7 @@ const Hero = () => {
         {/* Stat rail */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={rise({ opacity: 0, y: 30 })}
           transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mt-16"
         >

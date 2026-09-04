@@ -34,6 +34,12 @@ PRODUCTS = [
     {"sku": "PJ-1L-1",   "name": "Prokritir Jol 1 L",          "size": "1 L",      "pack": 1,   "price": 40,  "label": "Single Bottle", "category": "water"},
     {"sku": "PJ-1L-12",  "name": "Prokritir Jol 1 L x 12",     "size": "1 L",      "pack": 12,  "price": 400, "label": "12-Pack Case", "category": "water"},
     {"sku": "PJ-1L-24",  "name": "Prokritir Jol 1 L x 24",     "size": "1 L",      "pack": 24,  "price": 760, "label": "24-Pack Case", "category": "water"},
+    # pack is containers-per-unit (it renders as "pack of N" in the cart), so a
+    # single jar is 1. Note that the success page's "litres given back" tally
+    # sums pack x quantity, which therefore counts this jar as one litre
+    # against twenty sold. Fixing that properly needs a separate litres field
+    # on the catalog rather than overloading pack.
+    {"sku": "PJ-20L-1",  "name": "Prokritir Jol 20 L Jar",     "size": "20 L jar", "pack": 1,   "price": 120, "label": "Returnable Jar", "category": "water"},
 
     # Spices (Prokritir Masala)
     {"sku": "PM-TRIO",     "name": "Prokritir Masala Trio Combo", "size": "Trio Pack", "pack": 1, "price": 199, "label": "Turmeric + Chili + Cumin (100g each)", "category": "masala"},

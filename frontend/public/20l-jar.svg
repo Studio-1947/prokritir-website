@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 470" width="300" height="470" role="img" aria-labelledby="jarTitle">
+  <title id="jarTitle">Prokritir Jol 20 litre water jar</title>
+
+  <defs>
+    <!-- Body: bright rim on the left, a dark core, a second rim on the right.
+         That two-rim reading is what makes transparent plastic look round;
+         a single left-to-right ramp reads as a flat painted cylinder. -->
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#6fd4ea" stop-opacity="0.14"/>
+      <stop offset="9%"   stop-color="#e6f9ff" stop-opacity="0.46"/>
+      <stop offset="22%"  stop-color="#7fd2e6" stop-opacity="0.20"/>
+      <stop offset="52%"  stop-color="#2b7d9c" stop-opacity="0.16"/>
+      <stop offset="78%"  stop-color="#4bb2cd" stop-opacity="0.20"/>
+      <stop offset="91%"  stop-color="#d8f4ff" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#4aa8c4" stop-opacity="0.16"/>
+    </linearGradient>
+
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5cc6e0" stop-opacity="0.34"/>
+      <stop offset="45%"  stop-color="#2287ad" stop-opacity="0.46"/>
+      <stop offset="100%" stop-color="#0f5673" stop-opacity="0.62"/>
+    </linearGradient>
+
+    <linearGradient id="cap" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#0e3355"/>
+      <stop offset="26%"  stop-color="#2a6a9c"/>
+      <stop offset="60%"  stop-color="#17466d"/>
+      <stop offset="100%" stop-color="#0c2d4a"/>
+    </linearGradient>
+
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#4fd1e3"/>
+      <stop offset="100%" stop-color="#63e6a8"/>
+    </linearGradient>
+
+    <!-- Soft specular strip, blurred so it reads as a reflection rather than
+         as a painted white bar. -->
+    <filter id="soft" x="-60%" y="-20%" width="220%" height="140%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="softer" x="-60%" y="-20%" width="220%" height="140%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+
+    <!-- The jar silhouette, reused as a clip so every internal detail stops
+         at the plastic instead of being drawn over the page. -->
+    <path id="silhouette" d="
+      M 121 60
+      L 179 60
+      C 185 95, 199 107, 239 127
+      C 261 139, 271 152, 271 177
+      L 271 424
+      C 271 440, 261 449, 245 449
+      L 55 449
+      C 39 449, 29 440, 29 424
+      L 29 177
+      C 29 152, 39 139, 61 127
+      C 101 107, 115 95, 121 60
+      Z"/>
+    <clipPath id="jarClip"><use href="#silhouette"/></clipPath>
+  </defs>
+
+  <!-- Contact shadow, so the jar sits on something -->
+  <ellipse cx="150" cy="452" rx="104" ry="13" fill="#000" opacity="0.42" filter="url(#soft)"/>
+
+  <!-- ─── Cap ─── -->
+  <g>
+    <rect x="112" y="6" width="76" height="38" rx="9" fill="url(#cap)"/>
+    <!-- Knurling: the ridges a cap is gripped by -->
+    <g opacity="0.30" fill="#bfe3ff">
+      <rect x="119" y="12" width="2" height="26" rx="1"/>
+      <rect x="127" y="12" width="2" height="26" rx="1"/>
+      <rect x="135" y="12" width="2" height="26" rx="1"/>
+      <rect x="143" y="12" width="2" height="26" rx="1"/>
+      <rect x="151" y="12" width="2" height="26" rx="1"/>
+      <rect x="159" y="12" width="2" height="26" rx="1"/>
+      <rect x="167" y="12" width="2" height="26" rx="1"/>
+      <rect x="175" y="12" width="2" height="26" rx="1"/>
+    </g>
+    <rect x="112" y="6" width="76" height="10" rx="5" fill="#8fc9ee" opacity="0.34"/>
+    <rect x="110" y="42" width="80" height="9" rx="4.5" fill="#123f63"/>
+  </g>
+
+  <!-- ─── Neck ─── -->
+  <path d="M 121 50 L 179 50 L 179 62 C 179 66, 121 66, 121 62 Z" fill="#2a7ba0" opacity="0.5"/>
+  <rect x="121" y="50" width="6" height="14" fill="#dff6ff" opacity="0.35"/>
+
+  <!-- ─── The jar ─── -->
+  <g clip-path="url(#jarClip)">
+    <!-- Plastic -->
+    <use href="#silhouette" fill="url(#body)"/>
+
+    <!-- Water, with a meniscus a little below the shoulder -->
+    <rect x="20" y="152" width="260" height="310" fill="url(#water)"/>
+    <rect x="20" y="150" width="260" height="4" fill="#bff0ff" opacity="0.5"/>
+
+    <!-- Moulded ribs. Each is a pale band with a darker line beneath it:
+         the pair is what reads as a step in the wall. -->
+    <g>
+      <rect x="20" y="186" width="260" height="9" fill="#e8fbff" opacity="0.17"/>
+      <rect x="20" y="195" width="260" height="4" fill="#062231" opacity="0.30"/>
+      <rect x="20" y="214" width="260" height="9" fill="#e8fbff" opacity="0.15"/>
+      <rect x="20" y="223" width="260" height="4" fill="#062231" opacity="0.28"/>
+
+      <rect x="20" y="366" width="260" height="9" fill="#e8fbff" opacity="0.15"/>
+      <rect x="20" y="375" width="260" height="4" fill="#062231" opacity="0.28"/>
+      <rect x="20" y="394" width="260" height="9" fill="#e8fbff" opacity="0.17"/>
+      <rect x="20" y="403" width="260" height="4" fill="#062231" opacity="0.30"/>
+    </g>
+
+    <!-- Specular strips -->
+    <rect x="52" y="150" width="17" height="272" rx="9" fill="#ffffff" opacity="0.20" filter="url(#soft)"/>
+    <rect x="78" y="164" width="7"  height="244" rx="4" fill="#ffffff" opacity="0.13" filter="url(#soft)"/>
+    <rect x="243" y="168" width="11" height="236" rx="6" fill="#dff6ff" opacity="0.22" filter="url(#soft)"/>
+
+    <!-- Light pooling in the base, the way it does through a full jar -->
+    <ellipse cx="150" cy="432" rx="96" ry="20" fill="#7fe3f0" opacity="0.16" filter="url(#softer)"/>
+
+    <!-- ─── Label ─── -->
+    <g>
+      <rect x="41" y="252" width="218" height="92" rx="9" fill="#04121a" opacity="0.85"/>
+      <rect x="41" y="252" width="218" height="92" rx="9" fill="none" stroke="#4fd1e3" stroke-opacity="0.45"/>
+      <rect x="41" y="252" width="218" height="3" rx="1.5" fill="url(#accent)"/>
+
+      <text x="150" y="286" text-anchor="middle"
+            font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            font-size="21" font-weight="600" letter-spacing="0.5" fill="#f2fcff">Prokritir Jol</text>
+
+      <rect x="118" y="296" width="64" height="1" fill="#4fd1e3" opacity="0.55"/>
+
+      <text x="150" y="315" text-anchor="middle"
+            font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            font-size="9" font-weight="600" letter-spacing="2.6" fill="#8fdcea">RO PURIFIED</text>
+
+      <text x="150" y="336" text-anchor="middle"
+            font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            font-size="15" font-weight="700" letter-spacing="1.4" fill="#63e6a8">20 LITRES</text>
+    </g>
+  </g>
+
+  <!-- Rim light along the silhouette, drawn last so it sits on the edge -->
+  <use href="#silhouette" fill="none" stroke="#cdf2ff" stroke-opacity="0.42" stroke-width="1.6"/>
+</svg>
